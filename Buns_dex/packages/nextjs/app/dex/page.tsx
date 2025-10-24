@@ -175,7 +175,7 @@ const Dex = () => {
             functionName: "approve",
             args: [
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
-              parsedAmount * BigInt(2), // Approve double the amount for safety
+              parsedAmount * parsedAmount , // Approve double the amount for safety
             ],
           },
           {
@@ -183,7 +183,7 @@ const Dex = () => {
             functionName: "approve",
             args: [
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
-              estimatedTokenAmount * BigInt(2), // Approve double the amount for safety
+              estimatedTokenAmount * estimatedTokenAmount, // Approve double the amount for safety
             ],
           },
           {
