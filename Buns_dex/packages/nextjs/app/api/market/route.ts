@@ -29,7 +29,7 @@ export async function GET(_: Request) {
         volume24h: coin.quotes[0]?.volume24h || 0,
         marketCap: coin.quotes[0]?.marketCap || 0,
         sparkline: coin.sparkline || [],
-      })
+      }),
     );
 
     return Response.json({

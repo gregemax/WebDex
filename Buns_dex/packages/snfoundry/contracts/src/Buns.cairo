@@ -6,7 +6,7 @@
 mod Buns {
     use openzeppelin_access::ownable::OwnableComponent;
     use openzeppelin_token::erc20::{
-    	DefaultConfig as ERC20DefaultConfig, ERC20Component, ERC20HooksEmptyImpl
+        DefaultConfig as ERC20DefaultConfig, ERC20Component, ERC20HooksEmptyImpl,
     };
     use starknet::ContractAddress;
 

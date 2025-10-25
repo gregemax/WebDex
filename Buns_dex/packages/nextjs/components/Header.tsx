@@ -49,6 +49,7 @@ export const HeaderMenuLinks = () => {
   useEffect(() => {
     setIsDark(theme === "dark");
   }, [theme]);
+
   return (
     <>
       {menuLinks.map(({ label, href, icon }) => {
@@ -62,7 +63,7 @@ export const HeaderMenuLinks = () => {
                 isActive
                   ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
                   : ""
-              } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
+              } py-1.5 px-3 text-sm text-black dark:text-white font-medium rounded-full gap-2 grid grid-flow-col bg-blue-700 dark:bg-sky-500/50 bg-gradient-nav-base hover:bg-gradient-nav hover:text-white`}
             >
               {icon}
               <span>{label}</span>
@@ -79,11 +80,18 @@ export const HeaderMenuLinks = () => {
  */
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), [])
+  );
+
+  useOutsideClick(
+    sidebarRef,
+    useCallback(() => setIsSidebarOpen(false), [])
   );
 
   const { targetNetwork } = useTargetNetwork();
@@ -125,13 +133,13 @@ export const Header = () => {
   ]);
 
   return (
-    <div className=" lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
+    <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
       <div className="navbar-start w-auto lg:w-1/2 -mr-2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost 
-              [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1 
+            className={`ml-1 btn btn-ghost
+              [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1
               [@media(max-width:379px)]:!h-9 [@media(max-width:379px)]:!min-h-0
               [@media(max-width:379px)]:!w-10
               ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
@@ -139,7 +147,7 @@ export const Header = () => {
               setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
             }}
           >
-            <Bars3Icon className="h-1/2" />
+            {/* <Bars3Icon className="h-1/2" /> */}
           </label>
           {isDrawerOpen && (
             <ul
@@ -153,6 +161,13 @@ export const Header = () => {
             </ul>
           )}
         </div>
+        {/* Sidebar Toggle Button */}
+        <button
+          className="btn btn-ghost btn-sm lg:hidden"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          <Bars3Icon className="h-5 w-5" />
+        </button>
         <Link
           href="/"
           passHref
@@ -182,13 +197,42 @@ export const Header = () => {
           </span>
         ) : null}
         <CustomConnectButton />
-        {/* <FaucetButton /> */}
         <SwitchTheme
           className={`pointer-events-auto ${
             isLocalNetwork ? "mb-1 lg:mb-0" : ""
           }`}
         />
       </div>
+
+      {/* Sidebar */}
+      {isSidebarOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-40 bg-black bg-opacity-50 backdrop-blur-sm"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+          {/* Sidebar Content */}
+          <aside
+            ref={sidebarRef}
+            className={`fixed top-0 left-0 z-50 h-full bg-base-100 shadow-lg transform transition-transform duration-300 ease-in-out ${
+              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } w-1/2 lg:w-1/3`}
+          >
+            <div className="p-4">
+              <button
+                className="btn btn-ghost btn-sm mb-4"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                ✕
+              </button>
+              <ul className="menu menu-vertical gap-2">
+                <HeaderMenuLinks />
+              </ul>
+            </div>
+          </aside>
+        </>
+      )}
     </div>
   );
 };

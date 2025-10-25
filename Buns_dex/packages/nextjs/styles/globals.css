@@ -67,6 +67,10 @@
     border: 1px solid #5c4fe5;
   }
 
+  [data-theme="light"] .bg-gradient-nav-base {
+    background-image: linear-gradient(90deg, #a7ecff 0%, #e8b6ff 100%);
+  }
+
   .bg-gradient-nav {
     background: #000000;
   }
