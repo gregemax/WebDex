@@ -156,7 +156,7 @@ const Dex = () => {
       const parsedAmount = parseUnits(depositInput, 18);
       console.log(
         "Parsed STRK amount for deposit approval:",
-        parsedAmount.toString()
+        parsedAmount.toString(),
       );
       console.log("Parsed STRK amount for deposit:", parsedAmount.toString());
 
@@ -166,7 +166,7 @@ const Dex = () => {
 
       // Execute batched approvals and deposit transaction
       notification.info(
-        "Approving STRK and BNS spending and adding liquidity..."
+        "Approving STRK and BNS spending and adding liquidity...",
       );
       await depositLiquidityTx({
         calls: [
@@ -176,7 +176,7 @@ const Dex = () => {
             args: [
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
               // parsedAmount * parsedAmount , // Approve double the amount for safety
-              1000000000000000000000000000 //harcode 1 billion
+              1000000000000000000000000000, //harcode 1 billion
             ],
           },
           {
@@ -185,7 +185,7 @@ const Dex = () => {
             args: [
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
               // estimatedTokenAmount * estimatedTokenAmount, // Approve double the amount for safety
-              1000000000000000000000000000 //harcode 1 billion
+              1000000000000000000000000000, //harcode 1 billion
             ],
           },
           {
@@ -213,7 +213,7 @@ const Dex = () => {
       const parsedAmount = parseUnits(withdrawInput, 18);
       console.log(
         "Parsed liquidity amount for withdrawal:",
-        parsedAmount.toString()
+        parsedAmount.toString(),
       );
 
       // Execute the withdrawal (no approval needed for withdrawal)
@@ -253,7 +253,7 @@ const Dex = () => {
                   <div className="stat-value">
                     {strkReserves
                       ? parseFloat(
-                          formatUnits(strkReserves as unknown as bigint, 18)
+                          formatUnits(strkReserves as unknown as bigint, 18),
                         ).toFixed(3)
                       : "0.000"}
                   </div>
@@ -263,7 +263,7 @@ const Dex = () => {
                   <div className="stat-value">
                     {tokenReserves
                       ? parseFloat(
-                          formatUnits(tokenReserves as unknown as bigint, 18)
+                          formatUnits(tokenReserves as unknown as bigint, 18),
                         ).toFixed(3)
                       : "0.000"}
                   </div>
@@ -273,7 +273,7 @@ const Dex = () => {
                   <div className="stat-value">
                     {totalLiquidity
                       ? parseFloat(
-                          formatUnits(totalLiquidity as unknown as bigint, 18)
+                          formatUnits(totalLiquidity as unknown as bigint, 18),
                         ).toFixed(3)
                       : "0.000"}
                   </div>
@@ -363,15 +363,15 @@ const Dex = () => {
                         strkReserve={parseFloat(
                           strkReserves
                             ? formatUnits(strkReserves as unknown as bigint, 18)
-                            : "0"
+                            : "0",
                         )}
                         tokenReserve={parseFloat(
                           tokenReserves
                             ? formatUnits(
                                 tokenReserves as unknown as bigint,
-                                18
+                                18,
                               )
-                            : "0"
+                            : "0",
                         )}
                         addingStrk={parseFloat(strkInput || "0")}
                         addingToken={parseFloat(tokenInput || "0")}
@@ -453,8 +453,8 @@ const Dex = () => {
                             ? parseFloat(
                                 formatUnits(
                                   userLiquidity as unknown as bigint,
-                                  18
-                                )
+                                  18,
+                                ),
                               ).toFixed(3)
                             : "0"}{" "}
                           <span className="font-normal">LP Tokens</span>

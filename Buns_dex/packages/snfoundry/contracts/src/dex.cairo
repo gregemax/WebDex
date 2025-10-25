@@ -204,21 +204,16 @@ mod Dex {
         /// Returns:
         ///     (u256, u256): The amounts of tokens and STRK initialized.
         fn init(ref self: ContractState, tokens: u256, strk: u256) -> (u256, u256) {
-         //   assert(!self.initialized.read(), 'DEX already initialized');
+            //   assert(!self.initialized.read(), 'DEX already initialized');
 
-    // Ensure non-zero amounts
-        assert(tokens > 0, 'Tokens must be non-zero');
-        assert(strk > 0, 'STRK must be non-zero');
-            self.token.read().transfer_from(
-                get_caller_address(),
-                get_contract_address(),
-                tokens,
-            );
-            self.strk_token.read().transfer_from(   
-                get_caller_address(),
-                get_contract_address(),
-                strk,
-            );
+            // Ensure non-zero amounts
+            assert(tokens > 0, 'Tokens must be non-zero');
+            assert(strk > 0, 'STRK must be non-zero');
+            self.token.read().transfer_from(get_caller_address(), get_contract_address(), tokens);
+            self
+                .strk_token
+                .read()
+                .transfer_from(get_caller_address(), get_contract_address(), strk);
             self.total_liquidity.write(strk);
             self.liquidity.write(get_caller_address(), strk);
             (tokens, strk)
@@ -236,35 +231,30 @@ mod Dex {
         /// Returns:
         ///     u256: The output amount of STRK.
         fn price(self: @ContractState, x_input: u256, x_reserves: u256, y_reserves: u256) -> u256 {
+            assert(x_reserves > 0, 'Insufficient token reserves');
+            assert(y_reserves > 0, 'Insufficient STRK reserves');
 
-        assert(x_reserves > 0, 'Insufficient token reserves');
-        assert(y_reserves > 0, 'Insufficient STRK reserves');
-        
+            assert(x_input > 0, 'Input amount must be non-zero');
 
-        assert(x_input > 0, 'Input amount must be non-zero');
+            let fee_multiplier = 997;
+            let fee_denominator = 1000;
+            let x_input_after_fee = (x_input * fee_multiplier) / fee_denominator;
 
-        let fee_multiplier = 997;
-        let fee_denominator = 1000;
-        let x_input_after_fee = (x_input * fee_multiplier) / fee_denominator;
+            // Constant product formula: (x_reserves * y_reserves) = k
+            // After adding x_input_after_fee to x_reserves, calculate y_output
+            // (x_reserves + x_input_after_fee) * (y_reserves - y_output) = x_reserves * y_reserves
+            // y_output = y_reserves - (x_reserves * y_reserves) / (x_reserves + x_input_after_fee)
 
-        // Constant product formula: (x_reserves * y_reserves) = k
-        // After adding x_input_after_fee to x_reserves, calculate y_output
-        // (x_reserves + x_input_after_fee) * (y_reserves - y_output) = x_reserves * y_reserves
-        // y_output = y_reserves - (x_reserves * y_reserves) / (x_reserves + x_input_after_fee)
-        
-        let numerator = x_input_after_fee * y_reserves;
-        let denominator = x_reserves + x_input_after_fee;
-        
-        assert(denominator > 0, 'Invalid denominator');
+            let numerator = x_input_after_fee * y_reserves;
+            let denominator = x_reserves + x_input_after_fee;
 
-       
-        let y_output = numerator / denominator;
+            assert(denominator > 0, 'Invalid denominator');
 
+            let y_output = numerator / denominator;
 
-        
-        assert(y_output > 0, 'Output amount too small');
+            assert(y_output > 0, 'Output amount too small');
 
-        y_output
+            y_output
         }
 
         // Todo Checkpoint 5:  Implement your function get_liquidity here.
@@ -277,9 +267,7 @@ mod Dex {
         /// Returns:
         ///     u256: The liquidity amount.
         fn get_liquidity(self: @ContractState, lp_address: ContractAddress) -> u256 {
-            
             self.liquidity.read(lp_address)
-
         }
 
         // Todo Checkpoint 5:  Implement your function get_total_liquidity here.
@@ -321,11 +309,12 @@ mod Dex {
             self.strk_token.read().transfer_from(caller, contract_address, strk_input);
             self.token.read().transfer(caller, token_output);
 
-            self.emit(Event::StrkToTokenSwap(StrkToTokenSwap {
-                swapper: caller,
-                token_output,
-                strk_input,
-            }));
+            self
+                .emit(
+                    Event::StrkToTokenSwap(
+                        StrkToTokenSwap { swapper: caller, token_output, strk_input },
+                    ),
+                );
 
             token_output
         }
@@ -357,11 +346,12 @@ mod Dex {
             self.token.read().transfer_from(caller, contract_address, token_input);
             self.strk_token.read().transfer(caller, strk_output);
 
-            self.emit(Event::TokenToStrkSwap(TokenToStrkSwap {
-                swapper: caller,
-                tokens_input: token_input,
-                strk_output,
-            }));
+            self
+                .emit(
+                    Event::TokenToStrkSwap(
+                        TokenToStrkSwap { swapper: caller, tokens_input: token_input, strk_output },
+                    ),
+                );
 
             strk_output
         }
@@ -404,12 +394,17 @@ mod Dex {
             let current_liquidity = self.liquidity.read(caller);
             self.liquidity.write(caller, current_liquidity + liquidity_minted);
 
-            self.emit(Event::LiquidityProvided(LiquidityProvided {
-                liquidity_provider: caller,
-                liquidity_minted,
-                strk_input: strk_amount,
-                tokens_input: token_amount,
-            }));
+            self
+                .emit(
+                    Event::LiquidityProvided(
+                        LiquidityProvided {
+                            liquidity_provider: caller,
+                            liquidity_minted,
+                            strk_input: strk_amount,
+                            tokens_input: token_amount,
+                        },
+                    ),
+                );
 
             liquidity_minted
         }
@@ -469,12 +464,17 @@ mod Dex {
             self.strk_token.read().transfer(caller, strk_amount);
             self.token.read().transfer(caller, token_amount);
 
-            self.emit(Event::LiquidityRemoved(LiquidityRemoved {
-                liquidity_remover: caller,
-                liquidity_withdrawn: amount,
-                tokens_output: token_amount,
-                strk_output: strk_amount,
-            }));
+            self
+                .emit(
+                    Event::LiquidityRemoved(
+                        LiquidityRemoved {
+                            liquidity_remover: caller,
+                            liquidity_withdrawn: amount,
+                            tokens_output: token_amount,
+                            strk_output: strk_amount,
+                        },
+                    ),
+                );
 
             (strk_amount, token_amount)
         }

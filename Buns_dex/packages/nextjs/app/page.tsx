@@ -72,7 +72,7 @@ const Home = () => {
           <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
             <div className="flex w-full max-w-md flex-col items-center justify-start gap-10">
               <div className="flex flex-col items-center justify-center gap-1 text-center">
-                <span className="text-3xl font-bold">StarkDex Market</span>
+                <span className="text-3xl font-bold">BunsSwap</span>
                 {/* <span className="text-sm text-muted-foreground">
                   StarkDex Market Data for all
                 </span> */}
@@ -86,7 +86,8 @@ const Home = () => {
                 value=""
               />
             </div>
-            <div className="rounded-xl border border-border bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-20 p-6">
+
+            <div className="rounded-xl border border-border bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-8 p-6">
               <div className="flex size-full flex-col gap-2">
                 {loading ? (
                   Array.from({ length: 16 }, (_, i) => (
@@ -112,7 +113,6 @@ const Home = () => {
                           <th className="text-right p-4">7D</th>
                           <th className="text-right p-4">Volume(24h)</th>
                           <th className="text-right p-4">Market cap</th>
-                          <th className="text-center p-4">Last 7 days</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -154,14 +154,6 @@ const Home = () => {
                             <td className="p-4 text-right font-mono">
                               {formatCurrency(coin.marketCap)}
                             </td>
-                            <td className="p-4 text-center">
-                              <div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded">
-                                {/* Placeholder for sparkline chart */}
-                                <div className="text-xs text-muted-foreground pt-2">
-                                  Chart
-                                </div>
-                              </div>
-                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -169,6 +161,7 @@ const Home = () => {
                   </div>
                 )}
               </div>
+
               <p className="text-sm font-normal text-muted-foreground">
                 Disclaimer: The data presented on StarkDex is provided for
                 informational purposes only and is not intended as financial
