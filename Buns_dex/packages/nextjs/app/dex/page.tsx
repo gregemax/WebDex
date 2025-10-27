@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useAccount, useNetwork } from "@starknet-react/core";
 import {
   useScaffoldReadContract,
@@ -9,13 +10,15 @@ import {
 } from "~~/hooks/scaffold-stark";
 import { IntegerInput } from "~~/components/scaffold-stark/Input/IntegerInput";
 import { Balance } from "~~/components/scaffold-stark/Balance";
-import { Curve } from "./_components/Curve";
+import SwapDirectionButton from "~~/components/Swap/SwapDirectionButton";
+import { useSwapDirection } from "~~/hooks/useSwapDirection";
 import { formatUnits, parseUnits } from "ethers";
 import { notification } from "~~/utils/scaffold-stark";
 
 const Dex = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { swapDirection, toggleDirection } = useSwapDirection();
 
   const [strkInput, setStrkInput] = useState<string>("");
   const [tokenInput, setTokenInput] = useState<string>("");
@@ -50,6 +53,35 @@ const Dex = () => {
   const { data: totalLiquidity } = useScaffoldReadContract({
     contractName: "Dex",
     functionName: "get_total_liquidity",
+  });
+
+  // Calculate equivalent amounts for swap preview
+  const { data: strkToTokenEquivalent } = useScaffoldReadContract({
+    contractName: "Dex",
+    functionName: "price",
+    args:
+      strkInput && strkReserves && tokenReserves
+        ? [
+            parseUnits(strkInput, 18),
+            strkReserves as unknown as bigint,
+            tokenReserves as unknown as bigint,
+          ]
+        : [undefined, undefined, undefined],
+    watch: true,
+  });
+
+  const { data: tokenToStrkEquivalent } = useScaffoldReadContract({
+    contractName: "Dex",
+    functionName: "price",
+    args:
+      tokenInput && tokenReserves && strkReserves
+        ? [
+            parseUnits(tokenInput, 18),
+            tokenReserves as unknown as bigint,
+            strkReserves as unknown as bigint,
+          ]
+        : [undefined, undefined, undefined],
+    watch: true,
   });
 
   // Trigger refresh after successful transactions
@@ -156,7 +188,7 @@ const Dex = () => {
       const parsedAmount = parseUnits(depositInput, 18);
       console.log(
         "Parsed STRK amount for deposit approval:",
-        parsedAmount.toString(),
+        parsedAmount.toString()
       );
       console.log("Parsed STRK amount for deposit:", parsedAmount.toString());
 
@@ -166,7 +198,7 @@ const Dex = () => {
 
       // Execute batched approvals and deposit transaction
       notification.info(
-        "Approving STRK and BNS spending and adding liquidity...",
+        "Approving STRK and BNS spending and adding liquidity..."
       );
       await depositLiquidityTx({
         calls: [
@@ -177,6 +209,7 @@ const Dex = () => {
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
               // parsedAmount * parsedAmount , // Approve double the amount for safety
               1000000000000000000000000000, //harcode 1 billion
+              1000000000000000000000000000, //harcode 1 billion
             ],
           },
           {
@@ -185,6 +218,7 @@ const Dex = () => {
             args: [
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
               // estimatedTokenAmount * estimatedTokenAmount, // Approve double the amount for safety
+              1000000000000000000000000000, //harcode 1 billion
               1000000000000000000000000000, //harcode 1 billion
             ],
           },
@@ -213,7 +247,7 @@ const Dex = () => {
       const parsedAmount = parseUnits(withdrawInput, 18);
       console.log(
         "Parsed liquidity amount for withdrawal:",
-        parsedAmount.toString(),
+        parsedAmount.toString()
       );
 
       // Execute the withdrawal (no approval needed for withdrawal)
@@ -253,7 +287,7 @@ const Dex = () => {
                   <div className="stat-value">
                     {strkReserves
                       ? parseFloat(
-                          formatUnits(strkReserves as unknown as bigint, 18),
+                          formatUnits(strkReserves as unknown as bigint, 18)
                         ).toFixed(3)
                       : "0.000"}
                   </div>
@@ -263,7 +297,7 @@ const Dex = () => {
                   <div className="stat-value">
                     {tokenReserves
                       ? parseFloat(
-                          formatUnits(tokenReserves as unknown as bigint, 18),
+                          formatUnits(tokenReserves as unknown as bigint, 18)
                         ).toFixed(3)
                       : "0.000"}
                   </div>
@@ -273,7 +307,7 @@ const Dex = () => {
                   <div className="stat-value">
                     {totalLiquidity
                       ? parseFloat(
-                          formatUnits(totalLiquidity as unknown as bigint, 18),
+                          formatUnits(totalLiquidity as unknown as bigint, 18)
                         ).toFixed(3)
                       : "0.000"}
                   </div>
@@ -297,92 +331,148 @@ const Dex = () => {
                     Liquidity
                   </a>
                 </div>
-
                 {activeTab === "swap" && (
                   <div className="flex flex-col gap-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="card bg-base-100 shadow-xl">
+                    <div className="flex flex-col items-center gap-6 relative">
+                      <motion.div
+                        className="card bg-base-100 shadow-xl w-full max-w-md"
+                        animate={{
+                          y: swapDirection === "STRK_BNS" ? 0 : 0,
+                        }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      >
                         <div className="card-body">
-                          <h2 className="card-title">STRK → BNS</h2>
+                          <h2 className="card-title text-center">
+                            {swapDirection === "STRK_BNS" ? "STRK" : "BNS"}
+                          </h2>
                           <div className="form-control">
                             <label className="label">
-                              <span className="label-text">STRK Amount</span>
+                              <span className="label-text">
+                                {swapDirection === "STRK_BNS" ? "STRK" : "BNS"}{" "}
+                                Amount
+                              </span>
                             </label>
                             <IntegerInput
-                              value={strkInput}
-                              onChange={(value) =>
-                                setStrkInput(value.toString())
+                              value={
+                                swapDirection === "STRK_BNS"
+                                  ? strkInput
+                                  : tokenInput
                               }
-                              placeholder="Enter STRK amount"
+                              onChange={(value) => {
+                                if (swapDirection === "STRK_BNS") {
+                                  setStrkInput(value.toString());
+                                } else {
+                                  setTokenInput(value.toString());
+                                }
+                              }}
+                              placeholder={`Enter ${swapDirection === "STRK_BNS" ? "STRK" : "BNS"} amount`}
                               disableMultiplyBy1e18
                             />
-                          </div>
-                          <div className="card-actions justify-end">
-                            <button
-                              className="btn btn-primary"
-                              onClick={handleStrkToToken}
-                              disabled={!address || !strkInput}
-                            >
-                              Swap STRK for BNS
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="card bg-base-100 shadow-xl">
-                        <div className="card-body">
-                          <h2 className="card-title">BNS → STRK</h2>
-                          <div className="form-control">
-                            <label className="label">
-                              <span className="label-text">BNS Amount</span>
-                            </label>
-                            <IntegerInput
-                              value={tokenInput}
-                              onChange={(value) =>
-                                setTokenInput(value.toString())
-                              }
-                              placeholder="Enter BNS amount"
-                              disableMultiplyBy1e18
-                            />
-                          </div>
-                          <div className="card-actions justify-end">
-                            <button
-                              className="btn btn-primary"
-                              onClick={handleTokenToStrk}
-                              disabled={!address || !tokenInput}
-                            >
-                              Swap BNS for STRK
-                            </button>
+                            {swapDirection === "STRK_BNS" &&
+                              strkToTokenEquivalent && (
+                                <div className="text-sm text-muted-foreground mt-1">
+                                  ≈{" "}
+                                  {parseFloat(
+                                    formatUnits(
+                                      strkToTokenEquivalent as unknown as bigint,
+                                      18
+                                    )
+                                  ).toFixed(6)}{" "}
+                                  BNS
+                                </div>
+                              )}
+                            {swapDirection === "BNS_STRK" &&
+                              tokenToStrkEquivalent && (
+                                <div className="text-sm text-muted-foreground mt-1">
+                                  ≈{" "}
+                                  {parseFloat(
+                                    formatUnits(
+                                      tokenToStrkEquivalent as unknown as bigint,
+                                      18
+                                    )
+                                  ).toFixed(6)}{" "}
+                                  STRK
+                                </div>
+                              )}
                           </div>
                         </div>
-                      </div>
-                    </div>
+                      </motion.div>
 
-                    <div className="flex justify-center">
-                      <Curve
-                        strkReserve={parseFloat(
-                          strkReserves
-                            ? formatUnits(strkReserves as unknown as bigint, 18)
-                            : "0",
-                        )}
-                        tokenReserve={parseFloat(
-                          tokenReserves
-                            ? formatUnits(
-                                tokenReserves as unknown as bigint,
-                                18,
-                              )
-                            : "0",
-                        )}
-                        addingStrk={parseFloat(strkInput || "0")}
-                        addingToken={parseFloat(tokenInput || "0")}
-                        width={600}
-                        height={400}
-                        isDarkMode={false}
+                      <SwapDirectionButton
+                        swapDirection={swapDirection}
+                        onToggle={toggleDirection}
                       />
+
+                      <motion.div
+                        className="card bg-base-100 shadow-xl w-full max-w-md"
+                        animate={{
+                          y: swapDirection === "STRK_BNS" ? 0 : 0,
+                        }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      >
+                        <div className="card-body">
+                          <h2 className="card-title text-center">
+                            {swapDirection === "STRK_BNS" ? "BNS" : "STRK"}
+                          </h2>
+                          <div className="form-control">
+                            <label className="label">
+                              <span className="label-text">
+                                {swapDirection === "STRK_BNS" ? "BNS" : "STRK"}{" "}
+                                Amount
+                              </span>
+                            </label>
+                            <IntegerInput
+                              value={
+                                swapDirection === "STRK_BNS"
+                                  ? strkToTokenEquivalent
+                                    ? parseFloat(
+                                        formatUnits(
+                                          strkToTokenEquivalent as unknown as bigint,
+                                          18
+                                        )
+                                      ).toFixed(6)
+                                    : ""
+                                  : tokenToStrkEquivalent
+                                    ? parseFloat(
+                                        formatUnits(
+                                          tokenToStrkEquivalent as unknown as bigint,
+                                          18
+                                        )
+                                      ).toFixed(6)
+                                    : ""
+                              }
+                              onChange={() => {}} // Read-only
+                              placeholder={`You will receive ${swapDirection === "STRK_BNS" ? "BNS" : "STRK"}`}
+                              disableMultiplyBy1e18
+                              disabled
+                            />
+                          </div>
+                          <div className="card-actions justify-center">
+                            <button
+                              className="btn btn-primary"
+                              onClick={
+                                swapDirection === "STRK_BNS"
+                                  ? handleStrkToToken
+                                  : handleTokenToStrk
+                              }
+                              disabled={
+                                !address ||
+                                !(swapDirection === "STRK_BNS"
+                                  ? strkInput
+                                  : tokenInput)
+                              }
+                            >
+                              Swap{" "}
+                              {swapDirection === "STRK_BNS"
+                                ? "STRK for BNS"
+                                : "BNS for STRK"}
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
                     </div>
                   </div>
                 )}
-
                 {activeTab === "liquidity" && (
                   <div className="flex flex-col gap-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -453,8 +543,8 @@ const Dex = () => {
                             ? parseFloat(
                                 formatUnits(
                                   userLiquidity as unknown as bigint,
-                                  18,
-                                ),
+                                  18
+                                )
                               ).toFixed(3)
                             : "0"}{" "}
                           <span className="font-normal">LP Tokens</span>
