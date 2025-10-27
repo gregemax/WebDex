@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { _ } from "vitest/dist/chunks/reporters.d.BFLkQcL6";
+// import { _ } from "vitest/dist/chunks/reporters.d.BFLkQcL6";
 
 type PaginationProps = {
   currentPage: number;
@@ -55,7 +55,10 @@ const Pagination: React.FC<PaginationProps> = ({
                 {isGap && <span className="btn btn-ghost btn-sm">...</span>}
                 <button
                   onClick={() => goto(p)}
-                  className={`btn btn-sm ${p === currentPage ? "btn-active" : ""}`}
+                  className={`btn btn-sm ${ p === currentPage
+                    ? "!bg-gradient-nav text-black dark:text-white shadow-md"
+                    : "bg-blue-700 dark:bg-sky-500/50 hover:bg-gradient-nav hover:text-white"
+                  }`}
                 >
                   {p}
                 </button>

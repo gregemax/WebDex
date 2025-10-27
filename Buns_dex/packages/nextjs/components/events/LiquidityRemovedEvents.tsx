@@ -51,14 +51,17 @@ const LiquidityRemovedEvents: React.FC = () => {
         <>
           <div className="overflow-x-auto shadow-lg">
             <table className="table table-zebra w-full">
-
               <thead>
                 <tr>
                   <th className="bg-secondary text-white">S/N</th>
                   <th className="bg-secondary text-white">Address</th>
-                  <th className="bg-secondary text-white">Amount of STRK Out</th>
+                  <th className="bg-secondary text-white">
+                    Amount of STRK Out
+                  </th>
                   <th className="bg-secondary text-white">Amount of BNS Out</th>
-                  <th className="bg-secondary text-white">Liquidity Withdrawn</th>
+                  <th className="bg-secondary text-white">
+                    Liquidity Withdrawn
+                  </th>
                 </tr>
               </thead>
 
@@ -81,12 +84,16 @@ const LiquidityRemovedEvents: React.FC = () => {
                             address={`0x${BigInt(liquidity_remover).toString(16)}`}
                           />
                         </td>
-                        <td>{formatEther(event.args.strk_output).toString()}</td>
+                        <td>
+                          {formatEther(event.args.strk_output).toString()}
+                        </td>
                         <td>
                           {formatEther(event.args.tokens_output).toString()}
                         </td>
                         <td>
-                          {formatEther(event.args.liquidity_withdrawn).toString()}
+                          {formatEther(
+                            event.args.liquidity_withdrawn
+                          ).toString()}
                         </td>
                       </tr>
                     );
@@ -97,11 +104,12 @@ const LiquidityRemovedEvents: React.FC = () => {
           </div>
 
           <Pagination
-            currentPage={page} totalItems={totalItems}
-            itemsPerPage={PAGE_SIZE} onPageChange={(p) => setPage}
+            currentPage={page}
+            totalItems={totalItems}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={(p) => setPage(p)}
           />
         </>
-
       )}
     </div>
   );

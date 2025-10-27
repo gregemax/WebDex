@@ -3,9 +3,9 @@
 
 import type { NextPage } from "next";
 import React, { Suspense, useState } from "react";
-import { Address } from "~~/components/scaffold-stark/Address";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
-import { formatEther } from "ethers";
+// import { Address } from "~~/components/scaffold-stark/Address";
+// import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
+// import { formatEther } from "ethers";
 import dynamic from "next/dynamic";
 
 
@@ -54,6 +54,7 @@ const EventsPage: React.FC = () => {
 
   return (
     <div className="flex items-center flex-col flex-grow pt-10">
+      
       {/* Tabs */}
       <div className="w-full max-w-6xl px-4">
 

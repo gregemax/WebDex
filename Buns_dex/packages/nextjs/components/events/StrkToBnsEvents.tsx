@@ -6,6 +6,7 @@ import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEven
 import { formatEther } from "ethers";
 import Pagination from "../common/Pagination";
 
+
 type EventWithArgs = {
   args: Record<string, any>;
 }
@@ -54,8 +55,12 @@ const StarkToBnsEvents: React.FC = () => {
                   <tr>
                     <th className="bg-secondary text-white">S/N</th>
                     <th className="bg-secondary text-white">Address</th>
-                    <th className="bg-secondary text-white">Amount of STRK in</th>
-                    <th className="bg-secondary text-white">Amount of BNS out</th>
+                    <th className="bg-secondary text-white">
+                      Amount of STRK in
+                    </th>
+                    <th className="bg-secondary text-white">
+                      Amount of BNS out
+                    </th>
                   </tr>
                 </thead>
 
@@ -96,9 +101,8 @@ const StarkToBnsEvents: React.FC = () => {
                 </tbody>
                 */}
 
-
                 <tbody>
-                  {!events || events.length === 0 ? (
+                  {totalItems === 0 ? (
                     <tr>
                       <td colSpan={4} className="text-center">
                         No events found
@@ -108,15 +112,16 @@ const StarkToBnsEvents: React.FC = () => {
                     visible.map((event, localIndex) => {
                       const globalIndex = (page - 1) * PAGE_SIZE + localIndex + 1;
                       const swapper = event.args?.swapper;
+
                       return (
                         <tr key={globalIndex}>
                           <td className="text-center">{globalIndex}</td>
                           <td className="text-center">
-                            <Address
-                              address={`0x${BigInt(swapper).toString(16)}`}
-                            />
+                            <Address address={`0x${BigInt(swapper).toString(16)}`} />
                           </td>
-                          <td>{formatEther(event.args.strk_input).toString()}</td>
+                          <td>
+                            {formatEther(event.args.strk_input).toString()}
+                          </td>
                           <td>
                             {formatEther(event.args.token_output).toString()}
                           </td>
@@ -128,14 +133,13 @@ const StarkToBnsEvents: React.FC = () => {
               </table>
             </div>
 
-            <Pagination 
-              currentPage={page} totalItems={totalItems}
-              itemsPerPage={PAGE_SIZE} onPageChange={(p) => setPage}
+            <Pagination
+              currentPage={page}
+              totalItems={totalItems}
+              itemsPerPage={PAGE_SIZE}
+              onPageChange={setPage}
             />
-
           </>
-
-          
         )}
       </div>
     </div>

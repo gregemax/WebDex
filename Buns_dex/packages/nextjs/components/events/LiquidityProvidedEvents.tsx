@@ -81,7 +81,9 @@ const LiquidityProvidedEvents: React.FC = () => {
                           />
                         </td>
                         <td>{formatEther(event.args.strk_input).toString()}</td>
-                        <td>{formatEther(event.args.tokens_input).toString()}</td>
+                        <td>
+                          {formatEther(event.args.tokens_input).toString()}
+                        </td>
                         <td>
                           {formatEther(event.args.liquidity_minted).toString()}
                         </td>
@@ -94,11 +96,12 @@ const LiquidityProvidedEvents: React.FC = () => {
           </div>
 
           <Pagination
-            currentPage={page} totalItems={totalItems}
-            itemsPerPage={PAGE_SIZE} onPageChange={(p) => setPage}
+            currentPage={page}
+            totalItems={totalItems}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={(p) => setPage(p)}
           />
         </>
-
       )}
     </div>
   );

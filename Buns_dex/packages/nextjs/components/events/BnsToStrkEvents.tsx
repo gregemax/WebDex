@@ -54,7 +54,9 @@ const BnsToStrkEvents: React.FC = () => {
                   <th className="bg-secondary text-white">S/N</th>
                   <th className="bg-secondary text-white">Address</th>
                   <th className="bg-secondary text-white">Amount of BNS in</th>
-                  <th className="bg-secondary text-white">Amount of STRK out</th>
+                  <th className="bg-secondary text-white">
+                    Amount of STRK out
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -76,8 +78,12 @@ const BnsToStrkEvents: React.FC = () => {
                             address={`0x${BigInt(swapper).toString(16)}`}
                           />
                         </td>
-                        <td>{formatEther(event.args.tokens_input).toString()}</td>
-                        <td>{formatEther(event.args.strk_output).toString()}</td>
+                        <td>
+                          {formatEther(event.args.tokens_input).toString()}
+                        </td>
+                        <td>
+                          {formatEther(event.args.strk_output).toString()}
+                        </td>
                       </tr>
                     );
                   })
@@ -87,11 +93,12 @@ const BnsToStrkEvents: React.FC = () => {
           </div>
 
           <Pagination
-            currentPage={page} totalItems={totalItems}
-            itemsPerPage={PAGE_SIZE} onPageChange={(p) => setPage}
+            currentPage={page}
+            totalItems={totalItems}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={(p) => setPage(p)}
           />
         </>
-
       )}
     </div>
   );

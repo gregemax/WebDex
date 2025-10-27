@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import Pagination from "~~/components/common/Pagination";
 
 interface MarketData {
   rank: number;
@@ -18,7 +19,9 @@ interface MarketData {
 const Home = () => {
   const [marketData, setMarketData] = useState<MarketData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     const fetchMarketData = async () => {
@@ -42,6 +45,44 @@ const Home = () => {
 
     fetchMarketData();
   }, []);
+
+
+  const filteredMarketData = useMemo(() => {
+    if (!searchQuery.trim()) return marketData;
+
+    const query = searchQuery.toLowerCase();
+
+    // Try to parse the query as a number to filter price
+    const numericQuery = parseFloat(query);
+
+    return marketData.filter(
+      // Check if the query matcher the coin name, symbol, or price
+      (coin) =>
+        coin.name.toLowerCase().includes(query) ||
+        coin.symbol.toLowerCase().includes(query)
+
+      // Check if the query matches the coin name, symbol, or price
+      // const matchesName = coin.name.toLowerCase().includes(query);
+      // const matchesSymbol = coin.symbol.toLowerCase().includes(query);
+      // const matchesPrice =
+      //   !isNaN(numericQuery) &&
+      //   coin.price.toFixed(4).includes(numericQuery.toFixed(4));
+
+      // return matchesName || matchesSymbol || matchesPrice;
+    );
+  }, [marketData, searchQuery]);
+
+  const PAGE_SIZE = 20;
+
+  // Reset pagination when searching
+  useEffect(() => setPage(1), [searchQuery]);
+  useEffect(() => setPage(1), [marketData]);
+
+  const totalItems = filteredMarketData.length;
+  const visible = useMemo(
+    () => filteredMarketData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filteredMarketData, page]
+  );
 
   const formatCurrency = (value: number) => {
     if (value >= 1e9) {
@@ -82,8 +123,9 @@ const Home = () => {
               </div>
               <input
                 className="flex w-full truncate px-3 py-2 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 rounded-lg bg-background ring-2 ring-accent ring-offset-background focus-visible:ring-1 focus-visible:ring-primary h-10 text-sm"
-                placeholder="Token name or address"
-                value=""
+                placeholder="Search by token name or symbol"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
@@ -101,63 +143,125 @@ const Home = () => {
                     Error: {error}
                   </div>
                 ) : (
-                  <div className="w-full overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left p-4">#</th>
-                          <th className="text-left p-4">Coin</th>
-                          <th className="text-right p-4">Price</th>
-                          <th className="text-right p-4">1H</th>
-                          <th className="text-right p-4">24H</th>
-                          <th className="text-right p-4">7D</th>
-                          <th className="text-right p-4">Volume(24h)</th>
-                          <th className="text-right p-4">Market cap</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {marketData.map((coin, index) => (
-                          <tr
-                            key={coin.rank}
-                            className="border-b border-border hover:bg-muted/50"
-                          >
-                            <td className="p-4">{index + 1}</td>
-                            <td className="p-4">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium">{coin.name}</span>
-                                <span className="text-muted-foreground text-xs">
-                                  {coin.symbol}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right font-mono">
-                              ${coin.price.toFixed(coin.price < 1 ? 6 : 2)}
-                            </td>
-                            <td
-                              className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange1h)}`}
-                            >
-                              {formatPercent(coin.percentChange1h)}
-                            </td>
-                            <td
-                              className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange24h)}`}
-                            >
-                              {formatPercent(coin.percentChange24h)}
-                            </td>
-                            <td
-                              className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange7d)}`}
-                            >
-                              {formatPercent(coin.percentChange7d)}
-                            </td>
-                            <td className="p-4 text-right font-mono">
-                              {formatCurrency(coin.volume24h)}
-                            </td>
-                            <td className="p-4 text-right font-mono">
-                              {formatCurrency(coin.marketCap)}
-                            </td>
+                  <div className="flex flex-col gap-6 w-full">
+                    <div className="w-full overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border">
+                            <th className="text-left p-4">#</th>
+                            <th className="text-left p-4">Coin</th>
+                            <th className="text-right p-4">Price</th>
+                            <th className="text-right p-4">1H</th>
+                            <th className="text-right p-4">24H</th>
+                            <th className="text-right p-4">7D</th>
+                            <th className="text-right p-4">Volume(24h)</th>
+                            <th className="text-right p-4">Market cap</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+
+                        {/* <tbody>
+                          {filteredMarketData.map((coin, index) => (
+                            <tr
+                              key={coin.rank}
+                              className="border-b border-border hover:bg-muted/50"
+                            >
+                              <td className="p-4">{index + 1}</td>
+                              <td className="p-4">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">
+                                    {coin.name}
+                                  </span>
+                                  <span className="text-muted-foreground text-xs">
+                                    {coin.symbol}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                ${coin.price.toFixed(coin.price < 1 ? 6 : 2)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange1h)}`}
+                              >
+                                {formatPercent(coin.percentChange1h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange24h)}`}
+                              >
+                                {formatPercent(coin.percentChange24h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange7d)}`}
+                              >
+                                {formatPercent(coin.percentChange7d)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.volume24h)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.marketCap)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody> */}
+
+                        <tbody>
+                          {visible.map((coin, index) => (
+                            <tr
+                              key={coin.rank}
+                              className="border-b border-border hover:bg-muted/50"
+                            >
+                              <td className="p-4">{index + 1 + (page - 1) * PAGE_SIZE}</td>
+
+                              <td className="p-4">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">
+                                    {coin.name}
+                                  </span>
+                                  <span className="text-muted-foreground text-xs">
+                                    {coin.symbol}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="p-4 text-right font-mono">
+                                ${coin.price.toFixed(coin.price < 1 ? 6 : 2)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange1h)}`}
+                              >
+                                {formatPercent(coin.percentChange1h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange24h)}`}
+                              >
+                                {formatPercent(coin.percentChange24h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange7d)}`}
+                              >
+                                {formatPercent(coin.percentChange7d)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.volume24h)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.marketCap)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+
+                      </table>
+                    </div>
+                    {/* ✅ Pagination is added here */}
+                    {!loading && !error && (
+                      <Pagination
+                        currentPage={page}
+                        totalItems={totalItems}
+                        itemsPerPage={PAGE_SIZE}
+                        onPageChange={(p) => setPage(p)}
+                      />
+                    )}
                   </div>
                 )}
               </div>
