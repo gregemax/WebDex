@@ -109,7 +109,7 @@ const Home = () => {
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5 w-[90%] md:w-[75%]">
+        <div className="px-5 w-[90%]">
           <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
             <div className="flex w-full max-w-md flex-col items-center justify-start gap-10">
               <div className="flex flex-col items-center justify-center gap-1 text-center">
@@ -122,7 +122,7 @@ const Home = () => {
                 </span> */}
               </div>
               <input
-                className="flex w-full truncate px-3 py-2 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 rounded-lg bg-background ring-2 ring-accent ring-offset-background focus-visible:ring-1 focus-visible:ring-primary h-10 text-sm"
+                className="flex w-full truncate px-3 py-2 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 rounded-lg bg-background ring-2 ring-accent ring-offset-background h-10 text-sm"
                 placeholder="Search by token name or symbol"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -210,7 +210,9 @@ const Home = () => {
                               key={coin.rank}
                               className="border-b border-border hover:bg-muted/50"
                             >
-                              <td className="p-4">{index + 1 + (page - 1) * PAGE_SIZE}</td>
+                              <td className="p-4">
+                                {index + 1 + (page - 1) * PAGE_SIZE}
+                              </td>
 
                               <td className="p-4">
                                 <div className="flex items-center gap-2">
@@ -250,9 +252,9 @@ const Home = () => {
                             </tr>
                           ))}
                         </tbody>
-
                       </table>
                     </div>
+
                     {/* ✅ Pagination is added here */}
                     {!loading && !error && (
                       <Pagination
