@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import Pagination from "~~/components/common/Pagination";
 
 interface MarketData {
   rank: number;
@@ -18,7 +19,9 @@ interface MarketData {
 const Home = () => {
   const [marketData, setMarketData] = useState<MarketData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     const fetchMarketData = async () => {
@@ -42,6 +45,44 @@ const Home = () => {
 
     fetchMarketData();
   }, []);
+
+
+  const filteredMarketData = useMemo(() => {
+    if (!searchQuery.trim()) return marketData;
+
+    const query = searchQuery.toLowerCase();
+
+    // Try to parse the query as a number to filter price
+    const numericQuery = parseFloat(query);
+
+    return marketData.filter(
+      // Check if the query matcher the coin name, symbol, or price
+      (coin) =>
+        coin.name.toLowerCase().includes(query) ||
+        coin.symbol.toLowerCase().includes(query)
+
+      // Check if the query matches the coin name, symbol, or price
+      // const matchesName = coin.name.toLowerCase().includes(query);
+      // const matchesSymbol = coin.symbol.toLowerCase().includes(query);
+      // const matchesPrice =
+      //   !isNaN(numericQuery) &&
+      //   coin.price.toFixed(4).includes(numericQuery.toFixed(4));
+
+      // return matchesName || matchesSymbol || matchesPrice;
+    );
+  }, [marketData, searchQuery]);
+
+  const PAGE_SIZE = 20;
+
+  // Reset pagination when searching
+  useEffect(() => setPage(1), [searchQuery]);
+  useEffect(() => setPage(1), [marketData]);
+
+  const totalItems = filteredMarketData.length;
+  const visible = useMemo(
+    () => filteredMarketData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filteredMarketData, page]
+  );
 
   const formatCurrency = (value: number) => {
     if (value >= 1e9) {
@@ -72,7 +113,7 @@ const Home = () => {
           <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
             <div className="flex w-full max-w-md flex-col items-center justify-start gap-10">
               <div className="flex flex-col items-center justify-center gap-1 text-center">
-                <span className="text-3xl font-bold">StarkDex Market</span>
+                <span className="text-3xl font-bold">BunsSwap</span>
                 {/* <span className="text-sm text-muted-foreground">
                   StarkDex Market Data for all
                 </span> */}
@@ -82,11 +123,13 @@ const Home = () => {
               </div>
               <input
                 className="flex w-full truncate px-3 py-2 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 rounded-lg bg-background ring-2 ring-accent ring-offset-background focus-visible:ring-1 focus-visible:ring-primary h-10 text-sm"
-                placeholder="Token name or address"
-                value=""
+                placeholder="Search by token name or symbol"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="rounded-xl border border-border bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-20 p-6">
+
+            <div className="rounded-xl border border-border bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-8 p-6">
               <div className="flex size-full flex-col gap-2">
                 {loading ? (
                   Array.from({ length: 16 }, (_, i) => (
@@ -100,75 +143,129 @@ const Home = () => {
                     Error: {error}
                   </div>
                 ) : (
-                  <div className="w-full overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left p-4">#</th>
-                          <th className="text-left p-4">Coin</th>
-                          <th className="text-right p-4">Price</th>
-                          <th className="text-right p-4">1H</th>
-                          <th className="text-right p-4">24H</th>
-                          <th className="text-right p-4">7D</th>
-                          <th className="text-right p-4">Volume(24h)</th>
-                          <th className="text-right p-4">Market cap</th>
-                          <th className="text-center p-4">Last 7 days</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {marketData.map((coin, index) => (
-                          <tr
-                            key={coin.rank}
-                            className="border-b border-border hover:bg-muted/50"
-                          >
-                            <td className="p-4">{index + 1}</td>
-                            <td className="p-4">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium">{coin.name}</span>
-                                <span className="text-muted-foreground text-xs">
-                                  {coin.symbol}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right font-mono">
-                              ${coin.price.toFixed(coin.price < 1 ? 6 : 2)}
-                            </td>
-                            <td
-                              className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange1h)}`}
-                            >
-                              {formatPercent(coin.percentChange1h)}
-                            </td>
-                            <td
-                              className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange24h)}`}
-                            >
-                              {formatPercent(coin.percentChange24h)}
-                            </td>
-                            <td
-                              className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange7d)}`}
-                            >
-                              {formatPercent(coin.percentChange7d)}
-                            </td>
-                            <td className="p-4 text-right font-mono">
-                              {formatCurrency(coin.volume24h)}
-                            </td>
-                            <td className="p-4 text-right font-mono">
-                              {formatCurrency(coin.marketCap)}
-                            </td>
-                            <td className="p-4 text-center">
-                              <div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded">
-                                {/* Placeholder for sparkline chart */}
-                                <div className="text-xs text-muted-foreground pt-2">
-                                  Chart
-                                </div>
-                              </div>
-                            </td>
+                  <div className="flex flex-col gap-6 w-full">
+                    <div className="w-full overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border">
+                            <th className="text-left p-4">#</th>
+                            <th className="text-left p-4">Coin</th>
+                            <th className="text-right p-4">Price</th>
+                            <th className="text-right p-4">1H</th>
+                            <th className="text-right p-4">24H</th>
+                            <th className="text-right p-4">7D</th>
+                            <th className="text-right p-4">Volume(24h)</th>
+                            <th className="text-right p-4">Market cap</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+
+                        {/* <tbody>
+                          {filteredMarketData.map((coin, index) => (
+                            <tr
+                              key={coin.rank}
+                              className="border-b border-border hover:bg-muted/50"
+                            >
+                              <td className="p-4">{index + 1}</td>
+                              <td className="p-4">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">
+                                    {coin.name}
+                                  </span>
+                                  <span className="text-muted-foreground text-xs">
+                                    {coin.symbol}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                ${coin.price.toFixed(coin.price < 1 ? 6 : 2)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange1h)}`}
+                              >
+                                {formatPercent(coin.percentChange1h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange24h)}`}
+                              >
+                                {formatPercent(coin.percentChange24h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange7d)}`}
+                              >
+                                {formatPercent(coin.percentChange7d)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.volume24h)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.marketCap)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody> */}
+
+                        <tbody>
+                          {visible.map((coin, index) => (
+                            <tr
+                              key={coin.rank}
+                              className="border-b border-border hover:bg-muted/50"
+                            >
+                              <td className="p-4">{index + 1 + (page - 1) * PAGE_SIZE}</td>
+
+                              <td className="p-4">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">
+                                    {coin.name}
+                                  </span>
+                                  <span className="text-muted-foreground text-xs">
+                                    {coin.symbol}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="p-4 text-right font-mono">
+                                ${coin.price.toFixed(coin.price < 1 ? 6 : 2)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange1h)}`}
+                              >
+                                {formatPercent(coin.percentChange1h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange24h)}`}
+                              >
+                                {formatPercent(coin.percentChange24h)}
+                              </td>
+                              <td
+                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange7d)}`}
+                              >
+                                {formatPercent(coin.percentChange7d)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.volume24h)}
+                              </td>
+                              <td className="p-4 text-right font-mono">
+                                {formatCurrency(coin.marketCap)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+
+                      </table>
+                    </div>
+                    {/* ✅ Pagination is added here */}
+                    {!loading && !error && (
+                      <Pagination
+                        currentPage={page}
+                        totalItems={totalItems}
+                        itemsPerPage={PAGE_SIZE}
+                        onPageChange={(p) => setPage(p)}
+                      />
+                    )}
                   </div>
                 )}
               </div>
+
               <p className="text-sm font-normal text-muted-foreground">
                 Disclaimer: The data presented on StarkDex is provided for
                 informational purposes only and is not intended as financial
