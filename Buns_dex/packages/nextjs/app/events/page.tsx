@@ -1,265 +1,98 @@
+
 "use client";
 
 import type { NextPage } from "next";
-import { Address } from "~~/components/scaffold-stark/Address";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
-import { formatEther } from "ethers";
+import React, { Suspense, useState } from "react";
+// import { Address } from "~~/components/scaffold-stark/Address";
+// import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
+// import { formatEther } from "ethers";
+import dynamic from "next/dynamic";
 
-const Events: NextPage = () => {
-  const { data: strkToTokenEvent, isLoading: isStrkToTokenEventLoading } =
-    useScaffoldEventHistory({
-      contractName: "Dex",
-      eventName: "StrkToTokenSwap",
-      fromBlock: 2650733n,
-    });
 
-  const { data: tokenToStrkEvent, isLoading: isTokenToStrkEventLoading } =
-    useScaffoldEventHistory({
-      contractName: "Dex",
-      eventName: "TokenToStrkSwap",
-      fromBlock: 2650733n,
-    });
 
-  const {
-    data: liquidityProvideEvent,
-    isLoading: isLquidityProvideEventLoading,
-  } = useScaffoldEventHistory({
-    contractName: "Dex",
-    eventName: "LiquidityProvided",
-    fromBlock: 2650733n,
-  });
-
-  const {
-    data: liquidityRemovedEvent,
-    isLoading: isLiquidityRemovedEventLoading,
-  } = useScaffoldEventHistory({
-    contractName: "Dex",
-    eventName: "LiquidityRemoved",
-    fromBlock: 2650733n,
-  });
-
+const Loader: React.FC = () => {
   return (
-    <div className="flex items-center flex-col flex-grow pt-10">
-      <div>
-        <div className="text-center mb-4">
-          <span className="block text-2xl font-bold">STRK To BNS Events</span>
-        </div>
-        {isStrkToTokenEventLoading ? (
-          <div className="flex justify-center items-center mt-8">
-            <span className="loading loading-spinner loading-lg"></span>
-          </div>
-        ) : (
-          <div className="overflow-x-auto shadow-lg">
-            <table className="table table-zebra w-full">
-              <thead>
-                <tr>
-                  <th className="bg-secondary text-white">Address</th>
-                  <th className="bg-secondary text-white">Amount of STRK in</th>
-                  <th className="bg-secondary text-white">Amount of BNS out</th>
-                </tr>
-              </thead>
-              <tbody>
-                {!strkToTokenEvent || strkToTokenEvent.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="text-center">
-                      No events found
-                    </td>
-                  </tr>
-                ) : (
-                  strkToTokenEvent?.map((event, index) => {
-                    return (
-                      <tr key={index}>
-                        <td className="text-center">
-                          <Address
-                            address={`0x${BigInt(event.args.swapper).toString(16)}`}
-                          />
-                        </td>
-                        <td>{formatEther(event.args.strk_input).toString()}</td>
-                        <td>
-                          {formatEther(event.args.token_output).toString()}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-      {
-        <div className="mt-14">
-          <div className="text-center mb-4">
-            <span className="block text-2xl font-bold">BNS To STRK Events</span>
-          </div>
-          {isTokenToStrkEventLoading ? (
-            <div className="flex justify-center items-center mt-8">
-              <span className="loading loading-spinner loading-lg"></span>
-            </div>
-          ) : (
-            <div className="overflow-x-auto shadow-lg">
-              <table className="table table-zebra w-full">
-                <thead>
-                  <tr>
-                    <th className="bg-secondary text-white">Address</th>
-                    <th className="bg-secondary text-white">
-                      Amount of BNS in
-                    </th>
-                    <th className="bg-secondary text-white">
-                      Amount of STRK out
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {!tokenToStrkEvent || tokenToStrkEvent.length === 0 ? (
-                    <tr>
-                      <td colSpan={3} className="text-center">
-                        No events found
-                      </td>
-                    </tr>
-                  ) : (
-                    tokenToStrkEvent?.map((event, index) => {
-                      return (
-                        <tr key={index}>
-                          <td className="text-center">
-                            <Address
-                              address={`0x${BigInt(event.args.swapper).toString(16)}`}
-                            />
-                          </td>
-                          <td>
-                            {formatEther(event.args.tokens_input).toString()}
-                          </td>
-                          <td>
-                            {formatEther(event.args.strk_output).toString()}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      }
-      <div className="mt-14">
-        <div className="text-center mb-4">
-          <span className="block text-2xl font-bold">
-            Liquidity Provided Events
-          </span>
-        </div>
-        {isLquidityProvideEventLoading ? (
-          <div className="flex justify-center items-center mt-8">
-            <span className="loading loading-spinner loading-lg"></span>
-          </div>
-        ) : (
-          <div className="overflow-x-auto shadow-lg">
-            <table className="table table-zebra w-full">
-              <thead>
-                <tr>
-                  <th className="bg-secondary text-white">Address</th>
-                  <th className="bg-secondary text-white">Amount of STRK in</th>
-                  <th className="bg-secondary text-white">Amount of BNS in</th>
-                  <th className="bg-secondary text-white">Liquidity Minted</th>
-                </tr>
-              </thead>
-              <tbody>
-                {!liquidityProvideEvent ||
-                liquidityProvideEvent.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="text-center">
-                      No events found
-                    </td>
-                  </tr>
-                ) : (
-                  liquidityProvideEvent?.map((event, index) => {
-                    return (
-                      <tr key={index}>
-                        <td className="text-center">
-                          <Address
-                            address={`0x${BigInt(event.args.liquidity_provider).toString(16)}`}
-                          />
-                        </td>
-                        <td>{formatEther(event.args.strk_input).toString()}</td>
-                        <td>
-                          {formatEther(event.args.tokens_input).toString()}
-                        </td>
-                        <td>
-                          {formatEther(event.args.liquidity_minted).toString()}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-      <div className="mt-14">
-        <div className="text-center mb-4">
-          <span className="block text-2xl font-bold">
-            Liquidity Removed Events
-          </span>
-        </div>
-        {isLiquidityRemovedEventLoading ? (
-          <div className="flex justify-center items-center mt-8">
-            <span className="loading loading-spinner loading-lg"></span>
-          </div>
-        ) : (
-          <div className="overflow-x-auto shadow-lg">
-            <table className="table table-zebra w-full">
-              <thead>
-                <tr>
-                  <th className="bg-secondary text-white">Address</th>
-                  <th className="bg-secondary text-white">
-                    Amount of STRK Out
-                  </th>
-                  <th className="bg-secondary text-white">Amount of BNS Out</th>
-                  <th className="bg-secondary text-white">
-                    Liquidity Withdrawn
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {!liquidityRemovedEvent ||
-                liquidityRemovedEvent.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="text-center">
-                      No events found
-                    </td>
-                  </tr>
-                ) : (
-                  liquidityRemovedEvent?.map((event, index) => {
-                    return (
-                      <tr key={index}>
-                        <td className="text-center">
-                          <Address
-                            address={`0x${BigInt(event.args.liquidity_remover).toString(16)}`}
-                          />
-                        </td>
-                        <td>
-                          {formatEther(event.args.strk_output).toString()}
-                        </td>
-                        <td>
-                          {formatEther(event.args.tokens_output).toString()}
-                        </td>
-                        <td>
-                          {formatEther(
-                            event.args.liquidity_withdrawn
-                          ).toString()}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+    <div className="flex items-center justify-center mt-8">
+      <span className="loading loading-spinner loading-lg"></span>
     </div>
   );
 };
 
-export default Events;
+/**
+ * Dynamically import the 4 components.
+ * ssr: false to ensure client rendering (since they use client hooks).
+ * Provide a tiny loading component as fallback.
+*/
+
+const StrkToBnsEvents = dynamic(
+  () => import("~~/components/events/StrkToBnsEvents"),
+  { ssr: false, loading: () => <Loader /> }
+);
+const BnsToStrkEvents = dynamic(
+  () => import("~~/components/events/BnsToStrkEvents"),
+  { ssr: false, loading: () => <Loader /> }
+);
+const LiquidityProvidedEvents = dynamic(
+  () => import("~~/components/events/LiquidityProvidedEvents"),
+  { ssr: false, loading: () => <Loader /> }
+);
+const LiquidityRemovedEvents = dynamic(
+  () => import("~~/components/events/LiquidityRemovedEvents"),
+  { ssr: false, loading: () => <Loader /> }
+);
+
+
+const EventsPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>("strk-to-bns");
+
+  const tabs = [
+    { id: "strk-to-bns", label: "STRK → BNS", Component: StrkToBnsEvents },
+    { id: "bns-to-strk", label: "BNS → STRK", Component: BnsToStrkEvents },
+    { id: "liquidity-provided", label: "Liquidity Provided", Component: LiquidityProvidedEvents },
+    { id: "liquidity-removed", label: "Liquidity Removed", Component: LiquidityRemovedEvents },
+  ];
+
+  return (
+    <div className="flex items-center flex-col flex-grow pt-10">
+      
+      {/* Tabs */}
+      <div className="w-full max-w-6xl px-4">
+
+        <div className="flex flex-wrap items-center gap-2 justify-center">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              className={`btn btn-sm btn-outline transition-all duration-200 hover:scale-105 ${
+                activeTab === t.id
+                  ? "btn-active bg-gradient-nav text-white shadow-lg"
+                  : "hover:bg-gradient-nav hover:text-white"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+      </div>
+
+      <div className="w-full max-w-6xl px-4 mt-8">
+        <Suspense fallback={<Loader />}>
+          {/* render only the active component */}
+          {tabs.map((t) => {
+            if (t.id !== activeTab) return null;
+            const Component = t.Component;
+            return (
+              <div key={t.id} className="transition-opacity duration-200">
+                <Component />
+              </div>
+            );
+          })}
+        </Suspense>
+      </div>
+      
+    </div>
+  );
+};
+
+export default EventsPage;

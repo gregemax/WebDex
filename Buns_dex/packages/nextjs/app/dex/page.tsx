@@ -209,6 +209,7 @@ const Dex = () => {
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
               // parsedAmount * parsedAmount , // Approve double the amount for safety
               1000000000000000000000000000, //harcode 1 billion
+              1000000000000000000000000000, //harcode 1 billion
             ],
           },
           {
@@ -217,6 +218,7 @@ const Dex = () => {
             args: [
               "0x072bd4B40cA19F56a2C1BC74aCd989bE1E844e5675f7FF4c5CB73493Ed12a1bF",
               // estimatedTokenAmount * estimatedTokenAmount, // Approve double the amount for safety
+              1000000000000000000000000000, //harcode 1 billion
               1000000000000000000000000000, //harcode 1 billion
             ],
           },
