@@ -109,11 +109,11 @@ const Home = () => {
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5 w-[90%]">
+        <div className="px-5 w-[90%] max-w-7xl mx-auto">
           <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
             <div className="flex w-full max-w-md flex-col items-center justify-start gap-10">
               <div className="flex flex-col items-center justify-center gap-1 text-center">
-                <span className="text-3xl font-bold">BunsSwap</span>
+                <span className="text-3xl font-bold">BunSwap</span>
                 {/* <span className="text-sm text-muted-foreground">
                   StarkDex Market Data for all
                 </span> */}

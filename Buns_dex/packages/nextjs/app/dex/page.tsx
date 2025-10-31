@@ -266,11 +266,11 @@ const Dex = () => {
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5 w-[90%] md:w-[75%]">
+        <div className="px-5 w-full max-w-7xl mx-auto">
           <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
             <div className="flex w-full max-w-md flex-col items-center justify-start gap-10">
               <div className="flex flex-col items-center justify-center gap-1 text-center">
-                <span className="text-2xl font-bold">BunsSwap</span>
+                <span className="text-2xl font-bold">BunSwap</span>
                 <span className="text-sm text-muted-foreground">
                   Decentralized Exchange on Starknet
                 </span>
@@ -315,7 +315,7 @@ const Dex = () => {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-20 p-6">
+            <div className="rounded-xl bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-20 p-6">
               <div className="flex size-full flex-col gap-2">
                 <div className="tabs tabs-boxed justify-center mb-6">
                   <a
@@ -572,6 +572,7 @@ const Dex = () => {
                 research before interacting with smart contracts.
               </p>
             </div>
+
           </div>
         </div>
       </div>
