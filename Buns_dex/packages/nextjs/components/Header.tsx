@@ -82,7 +82,7 @@ export const HeaderMenuLinks = () => {
 export const Header = () => {
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -232,7 +232,7 @@ export const Header = () => {
                 </div>
 
                 <button
-                  className="text-xl text-red-600 font-bold border border-border border hover:bg-black/30  btn btn-ghost btn-sm mb-4 hover:cursor-pointer duration-300 ease-in-out transition-out"
+                  className="text-xl text-white font-bold border border-border border hover:bg-black/30  btn btn-ghost btn-sm mb-4 hover:cursor-pointer duration-300 ease-in-out transition-out"
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   ✕
