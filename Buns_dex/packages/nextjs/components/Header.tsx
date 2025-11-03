@@ -86,7 +86,6 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
 
@@ -94,6 +93,7 @@ export const Header = () => {
   const { address, status, chainId } = useAccount();
   const { chain } = useNetwork();
   const [isDeployed, setIsDeployed] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     if (
@@ -105,8 +105,16 @@ export const Header = () => {
       provider
         .getClassHashAt(address)
         .then((classHash) => {
-          if (classHash) setIsDeployed(true);
-          else setIsDeployed(false);
+          // if (classHash) setIsDeployed(true);
+          // else setIsDeployed(false);
+          if (classHash) {
+            setIsDeployed(true);
+            setTimeout(() => {
+              setShowSuccessModal(true);
+            }, 5000);
+          }else {
+            setIsDeployed(false);
+          }
         })
         .catch((e) => {
           console.error("contract check", e);
@@ -126,145 +134,187 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-4 lg:px-6 w-full max-w-7xl mx-auto">
-      <div className="navbar-start w-auto lg:w-1/2 -mr-2">
-        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`ml-1 btn btn-ghost
-              [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1
-              [@media(max-width:379px)]:!h-9 [@media(max-width:379px)]:!min-h-0
-              [@media(max-width:379px)]:!w-10
-              ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-            onClick={() => {
-              setIsDrawerOpen((isDrawerOpen) => !isDrawerOpen);
-              console.log(isDrawerOpen);
-            }}
-          >
-            {/* <Bars3Icon className="h-1/2" /> */}
-          </label>
-          {isDrawerOpen && (
-            <ul
+    <>
+      <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 w-full max-w-7xl mx-auto">
+        <div className="navbar-start w-auto lg:w-1/2 px-4 lg:px-8">
+          <div className="lg:hidden dropdown" ref={burgerMenuRef}>
+            <label
               tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-base-100"
+              className={`ml-1 btn btn-ghost
+                [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1
+                [@media(max-width:379px)]:!h-9 [@media(max-width:379px)]:!min-h-0
+                [@media(max-width:379px)]:!w-10
+                ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
               onClick={() => {
-                setIsDrawerOpen(false);
+                setIsDrawerOpen((isDrawerOpen) => !isDrawerOpen);
+                console.log(isDrawerOpen);
               }}
             >
-              <HeaderMenuLinks />
-            </ul>
-          )}
+              {/* <Bars3Icon className="h-1/2" /> */}
+            </label>
+            {isDrawerOpen && (
+              <ul
+                tabIndex={0}
+                className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-base-100"
+                onClick={() => {
+                  setIsDrawerOpen(false);
+                }}
+              >
+                <HeaderMenuLinks />
+              </ul>
+            )}
+          </div>
+
+          {/* Sidebar Toggle Button */}
+          <button
+            className="btn btn-ghost lg:hidden"
+            onClick={() => {
+              setIsSidebarOpen(!isSidebarOpen);
+              console.log(isSidebarOpen);
+            }}
+          >
+            <Bars3Icon className="h-5 w-5" />
+          </button>
+
+          <Link
+            href="/"
+            passHref
+            className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
+          >
+            <div className="flex relative w-10 h-10">
+              <Image
+                alt="SE2 logo"
+                className="cursor-pointer"
+                fill
+                src="/buns.png"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold leading-tight">BunsSwap</span>
+              <span className="text-xs">DEX on Starknet</span>
+            </div>
+          </Link>
+
+          <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
+            <HeaderMenuLinks />
+          </ul>
         </div>
 
-        {/* Sidebar Toggle Button */}
-        <button
-          className="btn btn-ghost btn-sm lg:hidden"
-          onClick={() => {
-            setIsSidebarOpen(!isSidebarOpen);
-            console.log(isSidebarOpen);
-          }}
-        >
-          <Bars3Icon className="h-5 w-5" />
-        </button>
-
-        <Link
-          href="/"
-          passHref
-          className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
-        >
-          <div className="flex relative w-10 h-10">
-            <Image
-              alt="SE2 logo"
-              className="cursor-pointer"
-              fill
-              src="/buns.png"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold leading-tight">BunsSwap</span>
-            <span className="text-xs">DEX on Starknet</span>
-          </div>
-        </Link>
-        <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
-          <HeaderMenuLinks />
-        </ul>
-      </div>
-
-      <div className="navbar-end flex-grow mr-2 gap-4">
-        {status === "connected" && !isDeployed ? (
-          <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
-            Wallet Not Deployed
-          </span>
-        ) : null}
-        <CustomConnectButton />
-        <SwitchTheme
-          className={`pointer-events-auto ${
-            isLocalNetwork ? "mb-1 lg:mb-0" : ""
-          }`}
-        />
-      </div>
-
-      {/* Sidebar */}
-      {isSidebarOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40 bg-black opacity-40 backdrop-blur-md"
-            onClick={() => setIsSidebarOpen(false)}
+        <div className="navbar-end flex-grow mr-2 gap-4">
+          {status === "connected" && !isDeployed ? (
+            <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
+              Wallet Not Deployed
+            </span>
+          ) : null}
+          <CustomConnectButton />
+          <SwitchTheme
+            className={`pointer-events-auto ${
+              isLocalNetwork ? "mb-1 lg:mb-0" : ""
+            }`}
           />
+        </div>
 
-          {/* Sidebar Content */}
-          <aside
-            ref={sidebarRef}
-            className={`fixed top-0 left-0 z-50 h-full bg-base-100 shadow-lg transform transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            } w-1/2 lg:w-1/3`}
-          >
-            <div className="grid gap-8 p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex relative w-10 h-10">
-                  <Image
-                    alt="BunSwap logo"
-                    className="cursor-pointer"
-                    fill
-                    src="/buns.png"
-                  />
+        {/* Sidebar */}
+        {isSidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-40 bg-black shadow-md opacity-50 backdrop-blur-md bg-base-100"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+
+            {/* <div
+              className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-all duration-500 ease-in-out opacity-0 translate-x-full
+              ${isSidebarOpen ? "opacity-100 translate-x-0" : ""}
+            `}
+              onClick={() => setIsSidebarOpen(false)}
+            /> */}
+
+            {/* Sidebar Content */}
+            <aside
+              ref={sidebarRef}
+              className={`fixed top-0 left-0 z-50 h-full bg-base-100 shadow-lg w-full sm:w-1/2 lg:w-1/3 transform transition-transform duration-300 ease-in-out ${
+                isSidebarOpen ? "translate-x-0" : ""
+              }`}
+            >
+              <div className="grid gap-8 p-6">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2 relative w-fit h-12">
+                    <div className="flex *:flex relative flex-1 items-center *:items-center gap-2 w-12 h-12">
+                      <Image
+                        alt="BunSwap logo"
+                        className="cursor-pointer"
+                        fill
+                        src="/buns.png"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <span className="font-bold leading-tight">BunsSwap</span>
+                      <span className="text-xs">DEX on Starknet</span>
+                    </div>
+                  </div>
+
+                  <button
+                    className="text-xl text-red-600 hover:text-white font-bold border border-border border hover:bg-black/30  btn btn-ghost btn-sm mb-4 hover:cursor-pointer duration-300 ease-in-out transition-out"
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    ✕
+                  </button>
                 </div>
 
-                <button
-                  className="text-xl text-white font-bold border border-border border hover:bg-black/30  btn btn-ghost btn-sm mb-4 hover:cursor-pointer duration-300 ease-in-out transition-out"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  ✕
-                </button>
+                <nav className="menu menu-vertical grid gap-4 w-full">
+                  {menuLinks.map(({ label, href, icon }) => {
+                    const isActive = pathname === href;
+                    return (
+                      <li key={href}>
+                        <Link
+                          href={href}
+                          passHref
+                          className={`${
+                            isActive
+                              ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
+                              : ""
+                          } flex items-center gap-4 py-2 text-base text-black hover:text-white dark:text-white dark:text-black font-medium bg-blue-700 dark:bg-sky-500/50 bg-gradient-nav-base hover:bg-gradient-nav hover:text-white`}
+                        >
+                          {icon}
+                          <span>{label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </nav>
               </div>
+            </aside>
+          </>
+        )}
+      </div>
 
-              <nav className="menu menu-vertical grid gap-4 w-full">
-                {menuLinks.map(({ label, href, icon }) => {
-                  const isActive = pathname === href;
-                  return (
-                    <li key={href}>
-                      <Link
-                        href={href}
-                        passHref
-                        className={`${
-                          isActive
-                            ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
-                            : ""
-                        } flex items-center gap-4 py-2 text-md text-black dark:text-white font-medium bg-blue-700 dark:bg-sky-500/50 bg-gradient-nav-base hover:bg-gradient-nav hover:text-white`}
-                      >
-                        {icon}
-                        <span>{label}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </nav>
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 text-center rounded-2xl shadow-2xl max-w-sm w-full p-8 animate-fade-in-up border border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-5xl">🎉</div>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                Wallet Deployed Successfully!
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Your Starknet wallet is now live and ready to interact with BunsSwap.
+              </p>
+
+              <button
+                className="mt-4 btn bg-gradient-to-r from-blue-600 to-sky-400 text-white font-semibold hover:opacity-90 transition-all"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                Awesome!
+              </button>
             </div>
-          </aside>
-        </>
+          </div>
+        </div>
       )}
-    </div>
+    </>
+
   );
 };
 

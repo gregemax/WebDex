@@ -1,14 +1,7 @@
-
 "use client";
 
-import type { NextPage } from "next";
 import React, { Suspense, useState } from "react";
-// import { Address } from "~~/components/scaffold-stark/Address";
-// import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
-// import { formatEther } from "ethers";
 import dynamic from "next/dynamic";
-
-
 
 const Loader: React.FC = () => {
   return (
@@ -22,7 +15,7 @@ const Loader: React.FC = () => {
  * Dynamically import the 4 components.
  * ssr: false to ensure client rendering (since they use client hooks).
  * Provide a tiny loading component as fallback.
-*/
+ */
 
 const StrkToBnsEvents = dynamic(
   () => import("~~/components/events/StrkToBnsEvents"),
@@ -41,23 +34,28 @@ const LiquidityRemovedEvents = dynamic(
   { ssr: false, loading: () => <Loader /> }
 );
 
-
 const EventsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("strk-to-bns");
 
   const tabs = [
     { id: "strk-to-bns", label: "STRK → BNS", Component: StrkToBnsEvents },
     { id: "bns-to-strk", label: "BNS → STRK", Component: BnsToStrkEvents },
-    { id: "liquidity-provided", label: "Liquidity Provided", Component: LiquidityProvidedEvents },
-    { id: "liquidity-removed", label: "Liquidity Removed", Component: LiquidityRemovedEvents },
+    {
+      id: "liquidity-provided",
+      label: "Liquidity Provided",
+      Component: LiquidityProvidedEvents,
+    },
+    {
+      id: "liquidity-removed",
+      label: "Liquidity Removed",
+      Component: LiquidityRemovedEvents,
+    },
   ];
 
   return (
     <div className="flex items-center flex-col flex-grow pt-10">
-      
       {/* Tabs */}
-      <div className="w-full max-w-6xl px-4">
-
+      <div className="w-full max-w-7xl px-4">
         <div className="flex flex-wrap items-center gap-2 justify-center">
           {tabs.map((t) => (
             <button
@@ -73,12 +71,11 @@ const EventsPage: React.FC = () => {
             </button>
           ))}
         </div>
-
       </div>
 
-      <div className="w-full max-w-6xl px-4 mt-8">
+      <div className="w-full max-w-7xl px-4 mt-8">
         <Suspense fallback={<Loader />}>
-          {/* render only the active component */}
+          {/* Render only the active component */}
           {tabs.map((t) => {
             if (t.id !== activeTab) return null;
             const Component = t.Component;
@@ -90,7 +87,6 @@ const EventsPage: React.FC = () => {
           })}
         </Suspense>
       </div>
-      
     </div>
   );
 };

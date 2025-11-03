@@ -46,7 +46,6 @@ const Home = () => {
     fetchMarketData();
   }, []);
 
-
   const filteredMarketData = useMemo(() => {
     if (!searchQuery.trim()) return marketData;
 
@@ -60,15 +59,6 @@ const Home = () => {
       (coin) =>
         coin.name.toLowerCase().includes(query) ||
         coin.symbol.toLowerCase().includes(query)
-
-      // Check if the query matches the coin name, symbol, or price
-      // const matchesName = coin.name.toLowerCase().includes(query);
-      // const matchesSymbol = coin.symbol.toLowerCase().includes(query);
-      // const matchesPrice =
-      //   !isNaN(numericQuery) &&
-      //   coin.price.toFixed(4).includes(numericQuery.toFixed(4));
-
-      // return matchesName || matchesSymbol || matchesPrice;
     );
   }, [marketData, searchQuery]);
 
@@ -108,10 +98,10 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5 w-[90%] max-w-7xl mx-auto">
-          <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
-            <div className="flex w-full max-w-md flex-col items-center justify-start gap-10">
+      <div className="flex items-center flex-col flex-grow pt-8">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="container flex flex-col items-center justify-start gap-20 px-4 lg:px-8">
+            <div className="flex w-full max-w-lg flex-col items-center justify-start gap-10">
               <div className="flex flex-col items-center justify-center gap-1 text-center">
                 <span className="text-3xl font-bold">BunSwap</span>
                 {/* <span className="text-sm text-muted-foreground">
@@ -129,8 +119,8 @@ const Home = () => {
               />
             </div>
 
-            <div className="rounded-xl border border-border bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-8 p-6">
-              <div className="flex size-full flex-col gap-2">
+            <div className="flex flex-1 flex-col items-center justify-between gap-8 border border-border bg-card rounded-xl text-card-foreground w-full max-w-7xl mx-auto">
+              <div className="flex flex-col gap-2 w-full">
                 {loading ? (
                   Array.from({ length: 16 }, (_, i) => (
                     <div
@@ -143,8 +133,8 @@ const Home = () => {
                     Error: {error}
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-6 w-full">
-                    <div className="w-full overflow-x-auto">
+                  <div className="flex flex-col gap-6 px-6 w-full mx-auto">
+                    <div className="w-full mx-auto overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-border">
@@ -158,51 +148,6 @@ const Home = () => {
                             <th className="text-right p-4">Market cap</th>
                           </tr>
                         </thead>
-
-                        {/* <tbody>
-                          {filteredMarketData.map((coin, index) => (
-                            <tr
-                              key={coin.rank}
-                              className="border-b border-border hover:bg-muted/50"
-                            >
-                              <td className="p-4">{index + 1}</td>
-                              <td className="p-4">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">
-                                    {coin.name}
-                                  </span>
-                                  <span className="text-muted-foreground text-xs">
-                                    {coin.symbol}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="p-4 text-right font-mono">
-                                ${coin.price.toFixed(coin.price < 1 ? 6 : 2)}
-                              </td>
-                              <td
-                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange1h)}`}
-                              >
-                                {formatPercent(coin.percentChange1h)}
-                              </td>
-                              <td
-                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange24h)}`}
-                              >
-                                {formatPercent(coin.percentChange24h)}
-                              </td>
-                              <td
-                                className={`p-4 text-right font-mono ${getPercentColor(coin.percentChange7d)}`}
-                              >
-                                {formatPercent(coin.percentChange7d)}
-                              </td>
-                              <td className="p-4 text-right font-mono">
-                                {formatCurrency(coin.volume24h)}
-                              </td>
-                              <td className="p-4 text-right font-mono">
-                                {formatCurrency(coin.marketCap)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody> */}
 
                         <tbody>
                           {visible.map((coin, index) => (
@@ -268,7 +213,7 @@ const Home = () => {
                 )}
               </div>
 
-              <p className="text-sm font-normal text-muted-foreground">
+              <p className="text-sm px-4 font-normal text-muted-foreground">
                 Disclaimer: The data presented on StarkDex is provided for
                 informational purposes only and is not intended as financial
                 advice. While we strive for accuracy, data may occasionally be

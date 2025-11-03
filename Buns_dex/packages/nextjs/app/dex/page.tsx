@@ -265,24 +265,37 @@ const Dex = () => {
 
   return (
     <>
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5 w-full max-w-7xl mx-auto">
-          <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
+      <div className="flex items-center flex-col flex-grow pt-8">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="container flex flex-col items-center justify-start gap-20 px-4 lg:px-8">
             <div className="flex w-full max-w-md flex-col items-center justify-start gap-10">
               <div className="flex flex-col items-center justify-center gap-1 text-center">
-                <span className="text-2xl font-bold">BunSwap</span>
-                <span className="text-sm text-muted-foreground">
-                  Decentralized Exchange on Starknet
+                <span className="text-2xl font-bold">
+                  BunSwap: Your Gateway to DeFi on Starknet
                 </span>
+                {/* BunSwap on Starknet
+                Swap STRK for BNS - Earn, Trade, and Grow 
+                
+                Trade Smarter on BunSwap 
+                Seamless STRK - BNS swaps and high-yield liquidity pools - all powered by Starknet.
+                */}
                 <span className="text-sm text-muted-foreground">
-                  Swap STRK for BNS tokens and provide liquidity
+                  The Decentralized Exchange on Starknet
                 </span>
+                {/* <span className="text-sm text-muted-foreground">
+                  Swap
+                  <strong className="font-bold">STRK</strong>↔
+                  <strong className="font-bold">BNS</strong>
+                  and earn rewards by providing liquidity
+                </span> */}
+                Trader STRK for BNS, stake liquidity, and explore the next
+                generation of decentralized trading.
               </div>
             </div>
 
-            <div className="flex w-full max-w-6xl flex-col items-end justify-start gap-2">
-              <div className="grid w-full grid-cols-1 gap-4 text-sm md:grid-cols-3">
-                <div className="stat">
+            <div className="flex w-full max-w-7xl flex-col items-end justify-start gap-2">
+              <div className="flex flex-wrap justify-center gap-4 w-full mx-auto text-sm">
+                <div className="stat p-4 sm:p-6 flex-1 min-w-[250px] max-w-[320px]">
                   <div className="stat-title">STRK Reserves</div>
                   <div className="stat-value">
                     {strkReserves
@@ -292,7 +305,8 @@ const Dex = () => {
                       : "0.000"}
                   </div>
                 </div>
-                <div className="stat">
+
+                <div className="stat p-4 sm:p-6 flex-1 min-w-[250px] max-w-[320px]">
                   <div className="stat-title">BNS Reserves</div>
                   <div className="stat-value">
                     {tokenReserves
@@ -302,7 +316,8 @@ const Dex = () => {
                       : "0.000"}
                   </div>
                 </div>
-                <div className="stat">
+
+                <div className="stat p-4 sm:p-6 flex-1 min-w-[250px] max-w-[320px]">
                   <div className="stat-title">Total Liquidity</div>
                   <div className="stat-value">
                     {totalLiquidity
@@ -315,7 +330,7 @@ const Dex = () => {
               </div>
             </div>
 
-            <div className="rounded-xl bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-20 p-6">
+            <div className="rounded-xl bg-card text-card-foreground flex w-full max-w-7xl flex-1 flex-col items-center justify-between gap-20 p-6">
               <div className="flex size-full flex-col gap-2">
                 <div className="tabs tabs-boxed justify-center mb-6">
                   <a
@@ -572,7 +587,6 @@ const Dex = () => {
                 research before interacting with smart contracts.
               </p>
             </div>
-
           </div>
         </div>
       </div>
