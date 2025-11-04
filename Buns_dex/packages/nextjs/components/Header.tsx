@@ -79,24 +79,17 @@ export const HeaderMenuLinks = () => {
  * Site header
  */
 export const Header = () => {
+  const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-<<<<<<< Updated upstream
   useOutsideClick(
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), [])
   );
 
-  useOutsideClick(
-    sidebarRef,
-    useCallback(() => setIsSidebarOpen(false), [])
-  );
-
-=======
->>>>>>> Stashed changes
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
 
@@ -166,16 +159,11 @@ export const Header = () => {
         </div>
         {/* Sidebar Toggle Button */}
         <button
-<<<<<<< Updated upstream
-          className="btn btn-ghost btn-sm lg:hidden"
-          onClick={() => setIsSidebarOpen(true)}
-=======
           className="btn btn-ghost lg:hidden"
           onClick={() => {
             setIsSidebarOpen(!isSidebarOpen);
             console.log(isSidebarOpen);
           }}
->>>>>>> Stashed changes
         >
           <Bars3Icon className="h-5 w-5" />
         </button>
@@ -222,11 +210,7 @@ export const Header = () => {
         <>
           {/* Backdrop */}
           <div
-<<<<<<< Updated upstream
-            className="fixed inset-0 z-40 bg-black bg-opacity-50 backdrop-blur-sm"
-=======
             className="fixed inset-0 z-40 bg-black shadow-md opacity-50 backdrop-blur-md bg-base-100"
->>>>>>> Stashed changes
             onClick={() => setIsSidebarOpen(false)}
           />
           {/* Sidebar Content */}
@@ -236,18 +220,6 @@ export const Header = () => {
               isSidebarOpen ? "translate-x-0" : ""
             }`}
           >
-<<<<<<< Updated upstream
-            <div className="p-4">
-              <button
-                className="btn btn-ghost btn-sm mb-4"
-                onClick={() => setIsSidebarOpen(false)}
-              >
-                ✕
-              </button>
-              <ul className="menu menu-vertical gap-2">
-                <HeaderMenuLinks />
-              </ul>
-=======
             <div className="grid gap-8 p-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2 relative w-fit h-12">
@@ -296,7 +268,6 @@ export const Header = () => {
                   );
                 })}
               </nav>
->>>>>>> Stashed changes
             </div>
           </aside>
         </>
