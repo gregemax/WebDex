@@ -35,7 +35,7 @@ export default function DownloadContracts() {
       };
       const mergedPredeployedContracts = deepMergeContracts(
         contractData,
-        configExternalContracts,
+        configExternalContracts
       );
 
       generateContractsFile(mergedPredeployedContracts);
@@ -61,12 +61,12 @@ export default function DownloadContracts() {
 
     const configExternalContracts = await prettier.default.format(
       `${generatedContractComment}\n\nconst configExternalContracts = ${JSON.stringify(
-        contractsData,
+        contractsData
       )} as const;\n\nexport default configExternalContracts;`,
       {
         parser: "typescript",
         plugins: [parserTypescript.default, prettierPluginEstree.default],
-      },
+      }
     );
     const blob = new Blob([configExternalContracts], {
       type: "text/typescript",
@@ -81,7 +81,7 @@ export default function DownloadContracts() {
 
   return (
     <div className="flex flex-col gap-y-6 lg:gap-y-8 py-8 lg:py-12 justify-center items-center">
-      <div className="p-6 px-8 mx-2 border-gradient rounded-[5px] w-full max-w-6xl contract-content">
+      <div className="p-6 px-8 mx-2 border-gradient rounded-[5px] w-full max-w-7xl contract-content">
         <div className="text-xl mb-2 font-bold">
           Fetch Contract Configuration File from Contract Address
         </div>

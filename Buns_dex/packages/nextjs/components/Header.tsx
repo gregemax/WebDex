@@ -84,6 +84,7 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
+<<<<<<< Updated upstream
   useOutsideClick(
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), [])
@@ -94,6 +95,8 @@ export const Header = () => {
     useCallback(() => setIsSidebarOpen(false), [])
   );
 
+=======
+>>>>>>> Stashed changes
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
 
@@ -133,8 +136,8 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-4 lg:px-6 w-full max-w-7xl mx-auto">
-      <div className="navbar-start w-auto lg:w-1/2 -mr-2">
+    <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 w-full max-w-7xl mx-auto">
+      <div className="navbar-start w-auto lg:w-1/2 px-4 lg:px-8">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
@@ -163,8 +166,16 @@ export const Header = () => {
         </div>
         {/* Sidebar Toggle Button */}
         <button
+<<<<<<< Updated upstream
           className="btn btn-ghost btn-sm lg:hidden"
           onClick={() => setIsSidebarOpen(true)}
+=======
+          className="btn btn-ghost lg:hidden"
+          onClick={() => {
+            setIsSidebarOpen(!isSidebarOpen);
+            console.log(isSidebarOpen);
+          }}
+>>>>>>> Stashed changes
         >
           <Bars3Icon className="h-5 w-5" />
         </button>
@@ -186,6 +197,7 @@ export const Header = () => {
             <span className="text-xs">DEX on Starknet</span>
           </div>
         </Link>
+
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
           <HeaderMenuLinks />
         </ul>
@@ -210,16 +222,21 @@ export const Header = () => {
         <>
           {/* Backdrop */}
           <div
+<<<<<<< Updated upstream
             className="fixed inset-0 z-40 bg-black bg-opacity-50 backdrop-blur-sm"
+=======
+            className="fixed inset-0 z-40 bg-black shadow-md opacity-50 backdrop-blur-md bg-base-100"
+>>>>>>> Stashed changes
             onClick={() => setIsSidebarOpen(false)}
           />
           {/* Sidebar Content */}
           <aside
             ref={sidebarRef}
-            className={`fixed top-0 left-0 z-50 h-full bg-base-100 shadow-lg transform transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            } w-1/2 lg:w-1/3`}
+            className={`fixed top-0 left-0 z-50 h-full bg-base-100 shadow-lg w-full sm:w-1/2 lg:w-1/3 transform transition-transform duration-300 ease-in-out ${
+              isSidebarOpen ? "translate-x-0" : ""
+            }`}
           >
+<<<<<<< Updated upstream
             <div className="p-4">
               <button
                 className="btn btn-ghost btn-sm mb-4"
@@ -230,6 +247,56 @@ export const Header = () => {
               <ul className="menu menu-vertical gap-2">
                 <HeaderMenuLinks />
               </ul>
+=======
+            <div className="grid gap-8 p-6">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2 relative w-fit h-12">
+                  <div className="flex *:flex relative flex-1 items-center *:items-center gap-2 w-12 h-12">
+                    <Image
+                      alt="BunSwap logo"
+                      className="cursor-pointer"
+                      fill
+                      src="/buns.png"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="font-bold leading-tight">BunsSwap</span>
+                    <span className="text-xs">DEX on Starknet</span>
+                  </div>
+                </div>
+
+                <button
+                  className="text-xl text-red-600 hover:text-white font-bold border border-border border hover:bg-black/30  btn btn-ghost btn-sm mb-4 hover:cursor-pointer duration-300 ease-in-out transition-out"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <nav className="menu menu-vertical grid gap-4 w-full">
+                {menuLinks.map(({ label, href, icon }) => {
+                  const isActive = pathname === href;
+                  return (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        passHref
+                        className={`${
+                          isActive
+                            ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
+                            : ""
+                        } flex items-center gap-4 py-2 text-base text-black hover:text-white dark:text-white dark:text-black font-medium bg-blue-700 dark:bg-sky-500/50 bg-gradient-nav-base hover:bg-gradient-nav hover:text-white`}
+                        onClick={() => setIsSidebarOpen(false)}
+                      >
+                        {icon}
+                        <span>{label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </nav>
+>>>>>>> Stashed changes
             </div>
           </aside>
         </>

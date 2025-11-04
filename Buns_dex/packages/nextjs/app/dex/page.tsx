@@ -23,6 +23,8 @@ const Dex = () => {
   const [withdrawInput, setWithdrawInput] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"swap" | "liquidity">("swap");
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [swapType, setSwapType] = useState<"STRK_BNS" | "BNS_STRK" | null>(null);
 
   // Read contract data
   const { data: strkReserves } = useScaffoldReadContract({
@@ -59,6 +61,7 @@ const Dex = () => {
   }, [refreshTrigger]);
 
   // Multi-write contract functions for batched transactions
+  
   const { sendAsync: strkToTokenSwap } = useScaffoldMultiWriteContract();
 
   const { sendAsync: tokenToStrkSwap } = useScaffoldMultiWriteContract();
@@ -100,7 +103,19 @@ const Dex = () => {
           },
         ],
       });
+
       notification.success("Swap successful!");
+      setSwapType("STRK_BNS");
+      
+      if (swapType) {
+        setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(true);
+        }, 3000);
+      } else {
+        setShowSuccessModal(false);
+      }
+
       setStrkInput("");
       setRefreshTrigger((prev) => prev + 1);
     } catch (error) {
@@ -138,7 +153,21 @@ const Dex = () => {
           },
         ],
       });
-      notification.success("Swap successful!");
+
+      // notification.success("Swap successful!");
+
+      // Instead of toast
+      setSwapType("BNS_STRK");
+
+      if (swapType) {
+        setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(true);
+        }, 3000);
+      }else {
+        setShowSuccessModal(false);
+      }
+
       setTokenInput("");
       setRefreshTrigger((prev) => prev + 1);
     } catch (error) {
@@ -231,6 +260,7 @@ const Dex = () => {
 
   return (
     <>
+<<<<<<< Updated upstream
       <div className="flex items-center flex-col flex-grow pt-10">
         <div className="px-5 w-[90%] md:w-[75%]">
           <div className="container flex flex-col items-center justify-start gap-20 px-4 md:px-8">
@@ -239,16 +269,26 @@ const Dex = () => {
                 <span className="text-2xl font-bold">BunsSwap</span>
                 <span className="text-sm text-muted-foreground">
                   Decentralized Exchange on Starknet
+=======
+      <div className="flex items-center flex-col flex-grow pt-8">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="container flex flex-col items-center gap-8 px-4 lg:px-8 w-full max-w-7xl">
+            <div className="flex w-full max-w-lg flex-col items-center">
+              <div className="flex flex-col items-center justify-center gap-1 text-center">
+                <span className="text-2xl font-bold">
+                  BunSwap: Your Gateway to DeFi on Starknet
+>>>>>>> Stashed changes
                 </span>
+
                 <span className="text-sm text-muted-foreground">
-                  Swap STRK for BNS tokens and provide liquidity
+                  The Decentralized Exchange on Starknet
                 </span>
               </div>
             </div>
 
-            <div className="flex w-full max-w-6xl flex-col items-end justify-start gap-2">
-              <div className="grid w-full grid-cols-1 gap-4 text-sm md:grid-cols-3">
-                <div className="stat">
+            <div className="flex flex-col items-end gap-2 w-full">
+              <div className="flex flex-wrap items-center justify-center gap-4 w-full mx-auto text-sm">
+                <div className="stat p-4 sm:p-6 w-fit">
                   <div className="stat-title">STRK Reserves</div>
                   <div className="stat-value">
                     {strkReserves
@@ -258,7 +298,8 @@ const Dex = () => {
                       : "0.000"}
                   </div>
                 </div>
-                <div className="stat">
+
+                <div className="stat p-4 sm:p-6 w-fit">
                   <div className="stat-title">BNS Reserves</div>
                   <div className="stat-value">
                     {tokenReserves
@@ -268,7 +309,8 @@ const Dex = () => {
                       : "0.000"}
                   </div>
                 </div>
-                <div className="stat">
+
+                <div className="stat p-4 sm:p-6 w-fit">
                   <div className="stat-title">Total Liquidity</div>
                   <div className="stat-value">
                     {totalLiquidity
@@ -281,21 +323,28 @@ const Dex = () => {
               </div>
             </div>
 
+<<<<<<< Updated upstream
             <div className="rounded-xl border border-border bg-card text-card-foreground flex w-full max-w-6xl flex-1 flex-col items-center justify-between gap-20 p-6">
               <div className="flex size-full flex-col gap-2">
                 <div className="tabs tabs-boxed justify-center mb-6">
                   <a
+=======
+            <div className="rounded-xl bg-card text-card-foreground flex flex-1 flex-col items-center justify-between gap-8 w-full">
+              <div className="flex size-full flex-col gap-2 lg:text-lg">
+                <div className="tabs tabs-boxed justify-center">
+                  <button
+>>>>>>> Stashed changes
                     className={`tab ${activeTab === "swap" ? "tab-active" : ""}`}
                     onClick={() => setActiveTab("swap")}
                   >
                     Swap
-                  </a>
-                  <a
+                  </button>
+                  <button
                     className={`tab ${activeTab === "liquidity" ? "tab-active" : ""}`}
                     onClick={() => setActiveTab("liquidity")}
                   >
                     Liquidity
-                  </a>
+                  </button>
                 </div>
 
                 {activeTab === "swap" && (
@@ -306,7 +355,14 @@ const Dex = () => {
                           <h2 className="card-title">STRK → BNS</h2>
                           <div className="form-control">
                             <label className="label">
+<<<<<<< Updated upstream
                               <span className="label-text">STRK Amount</span>
+=======
+                              <span className="label-text text-sm font-medium">
+                                {swapDirection === "STRK_BNS" ? "STRK" : "BNS"}{" "}
+                                Amount
+                              </span>
+>>>>>>> Stashed changes
                             </label>
                             <IntegerInput
                               value={strkInput}
@@ -317,7 +373,63 @@ const Dex = () => {
                               disableMultiplyBy1e18
                             />
                           </div>
+<<<<<<< Updated upstream
                           <div className="card-actions justify-end">
+=======
+                        </div>
+                      </motion.div>
+
+                      <SwapDirectionButton
+                        swapDirection={swapDirection}
+                        onToggle={toggleDirection}
+                      />
+
+                      <motion.div
+                        className="card bg-base-100 shadow-xl w-full max-w-md"
+                        animate={{
+                          y: swapDirection === "STRK_BNS" ? 0 : 0,
+                        }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      >
+                        <div className="card-body">
+                          <h2 className="card-title text-center">
+                            {swapDirection === "STRK_BNS" ? "BNS" : "STRK"}
+                          </h2>
+                          <div className="form-control">
+                            <label className="label">
+                              <span className="label-text text-sm font-medium">
+                                {swapDirection === "STRK_BNS" ? "BNS" : "STRK"}{" "}
+                                Amount
+                              </span>
+                            </label>
+                            <IntegerInput
+                              value={
+                                swapDirection === "STRK_BNS"
+                                  ? strkToTokenEquivalent
+                                    ? parseFloat(
+                                        formatUnits(
+                                          strkToTokenEquivalent as unknown as bigint,
+                                          18
+                                        )
+                                      ).toFixed(6)
+                                    : ""
+                                  : tokenToStrkEquivalent
+                                    ? parseFloat(
+                                        formatUnits(
+                                          tokenToStrkEquivalent as unknown as bigint,
+                                          18
+                                        )
+                                      ).toFixed(6)
+                                    : ""
+                              }
+                              onChange={() => {}} // Read-only
+                              placeholder={`You will receive ${swapDirection === "STRK_BNS" ? "BNS" : "STRK"}`}
+                              disableMultiplyBy1e18
+                              disabled
+                            />
+                          </div>
+                          <div className="card-actions justify-center">
+>>>>>>> Stashed changes
                             <button
                               className="btn btn-primary"
                               onClick={handleStrkToToken}
@@ -391,7 +503,9 @@ const Dex = () => {
                           <h2 className="card-title">Add Liquidity</h2>
                           <div className="form-control">
                             <label className="label">
-                              <span className="label-text">STRK Amount</span>
+                              <span className="label-text text-sm font-medium">
+                                STRK Amount
+                              </span>
                             </label>
                             <IntegerInput
                               value={depositInput}
@@ -417,9 +531,9 @@ const Dex = () => {
                       <div className="card bg-base-100 shadow-xl">
                         <div className="card-body">
                           <h2 className="card-title">Remove Liquidity</h2>
-                          <div className="form-control">
+                          <div className="form-control grid gap-2">
                             <label className="label">
-                              <span className="label-text">
+                              <span className="label-text text-sm font-medium">
                                 Liquidity Amount
                               </span>
                             </label>
@@ -484,6 +598,44 @@ const Dex = () => {
             </div>
           </div>
         </div>
+
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-300 animate-fade-in">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="bg-white dark:bg-gray-800 text-center rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-200 dark:border-gray-700"
+            >
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-4xl lg:text-5xl">
+                  {swapType === "STRK_BNS" ? "🎉" : "💫"}
+                </div>
+
+                <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white">
+                  {swapType === "STRK_BNS"
+                    ? "STRK → BNS Swap Successful!"
+                    : "BNS → STRK Swap Successful!"}
+                </h2>
+
+                <p className="text-gray-500 dark:text-gray-400 font-semibold">
+                  {swapType === "STRK_BNS"
+                    ? "Your STRK was successfully swapped for BNS."
+                    : "Your BNS was successfully swapped for STRK."}
+                </p>
+
+                <button
+                  className="btn bg-gradient-to-r from-blue-600 to-sky-400 text-white font-semibold hover:bg-gradient-nav transition-all"
+                  onClick={() => setShowSuccessModal(false)}
+                >
+                  Awesome!
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     </>
   );

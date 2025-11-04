@@ -4,9 +4,9 @@ import "~~/styles/globals.css";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "BunsSwap",
+  title: "BunSwap",
   description: "Decentralized Exchange on Starknet",
-  icons: "/logo.ico",
+  icons: "/buns.png",
 };
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
