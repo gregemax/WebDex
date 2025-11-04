@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,8 +9,8 @@ import {
   BoltIcon,
   BugAntIcon,
   CircleStackIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
-import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
@@ -28,6 +28,7 @@ export const menuLinks: HeaderMenuLink[] = [
   {
     label: "Home",
     href: "/",
+    icon: <HomeIcon className="h-4 w-4" />,
   },
   {
     label: "Dex",
@@ -52,12 +53,12 @@ export const HeaderMenuLinks = () => {
 
   return (
     <>
-      {menuLinks.map(({ label, href, icon }) => {
-        const isActive = pathname === href;
+      {menuLinks.map((item) => {
+        const isActive = pathname === item?.href;
         return (
-          <li key={href}>
+          <li key={item?.href}>
             <Link
-              href={href}
+              href={item?.href}
               passHref
               className={`${
                 isActive
@@ -65,8 +66,8 @@ export const HeaderMenuLinks = () => {
                   : ""
               } py-1.5 px-3 text-sm text-black dark:text-white font-medium rounded-full gap-2 grid grid-flow-col bg-blue-700 dark:bg-sky-500/50 bg-gradient-nav-base hover:bg-gradient-nav hover:text-white`}
             >
-              {icon}
-              <span>{label}</span>
+              {item?.icon}
+              <span>{item?.label}</span>
             </Link>
           </li>
         );
@@ -85,10 +86,6 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  useOutsideClick(
-    burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), [])
-  );
 
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
@@ -140,7 +137,8 @@ export const Header = () => {
               [@media(max-width:379px)]:!w-10
               ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
             onClick={() => {
-              setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
+              setIsDrawerOpen((isDrawerOpen) => !isDrawerOpen);
+              console.log(isDrawerOpen);
             }}
           >
             {/* <Bars3Icon className="h-1/2" /> */}
@@ -157,9 +155,10 @@ export const Header = () => {
             </ul>
           )}
         </div>
+
         {/* Sidebar Toggle Button */}
         <button
-          className="btn btn-ghost lg:hidden"
+          className="btn btn-ghost btn-sm lg:hidden"
           onClick={() => {
             setIsSidebarOpen(!isSidebarOpen);
             console.log(isSidebarOpen);
@@ -167,6 +166,7 @@ export const Header = () => {
         >
           <Bars3Icon className="h-5 w-5" />
         </button>
+
         <Link
           href="/"
           passHref
@@ -177,7 +177,7 @@ export const Header = () => {
               alt="SE2 logo"
               className="cursor-pointer"
               fill
-              src="/logo.svg"
+              src="/buns.png"
             />
           </div>
           <div className="flex flex-col">
@@ -190,7 +190,7 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div>
-      
+
       <div className="navbar-end flex-grow mr-2 gap-4">
         {status === "connected" && !isDeployed ? (
           <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
@@ -210,9 +210,10 @@ export const Header = () => {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40 bg-black shadow-md opacity-50 backdrop-blur-md bg-base-100"
+            className="fixed inset-0 z-40 bg-black opacity-40 backdrop-blur-md"
             onClick={() => setIsSidebarOpen(false)}
           />
+
           {/* Sidebar Content */}
           <aside
             ref={sidebarRef}
@@ -222,24 +223,17 @@ export const Header = () => {
           >
             <div className="grid gap-8 p-6">
               <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 relative w-fit h-12">
-                  <div className="flex *:flex relative flex-1 items-center *:items-center gap-2 w-12 h-12">
-                    <Image
-                      alt="BunSwap logo"
-                      className="cursor-pointer"
-                      fill
-                      src="/buns.png"
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <span className="font-bold leading-tight">BunsSwap</span>
-                    <span className="text-xs">DEX on Starknet</span>
-                  </div>
+                <div className="flex relative w-10 h-10">
+                  <Image
+                    alt="BunSwap logo"
+                    className="cursor-pointer"
+                    fill
+                    src="/buns.png"
+                  />
                 </div>
 
                 <button
-                  className="text-xl text-red-600 hover:text-white font-bold border border-border border hover:bg-black/30  btn btn-ghost btn-sm mb-4 hover:cursor-pointer duration-300 ease-in-out transition-out"
+                  className="text-xl text-white font-bold border border-border border hover:bg-black/30  btn btn-ghost btn-sm mb-4 hover:cursor-pointer duration-300 ease-in-out transition-out"
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   ✕
@@ -258,8 +252,7 @@ export const Header = () => {
                           isActive
                             ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
                             : ""
-                        } flex items-center gap-4 py-2 text-base text-black hover:text-white dark:text-white dark:text-black font-medium bg-blue-700 dark:bg-sky-500/50 bg-gradient-nav-base hover:bg-gradient-nav hover:text-white`}
-                        onClick={() => setIsSidebarOpen(false)}
+                        } flex items-center gap-4 py-2 text-md text-black dark:text-white font-medium bg-blue-700 dark:bg-sky-500/50 bg-gradient-nav-base hover:bg-gradient-nav hover:text-white`}
                       >
                         {icon}
                         <span>{label}</span>
@@ -275,3 +268,5 @@ export const Header = () => {
     </div>
   );
 };
+
+
