@@ -126,8 +126,8 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-4 lg:px-6 w-full max-w-7xl mx-auto">
-      <div className="navbar-start w-auto lg:w-1/2 -mr-2">
+    <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 w-full max-w-7xl mx-auto">
+      <div className="navbar-start w-auto lg:w-1/2 px-4 lg:px-8">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
@@ -185,6 +185,7 @@ export const Header = () => {
             <span className="text-xs">DEX on Starknet</span>
           </div>
         </Link>
+
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
           <HeaderMenuLinks />
         </ul>
@@ -216,9 +217,9 @@ export const Header = () => {
           {/* Sidebar Content */}
           <aside
             ref={sidebarRef}
-            className={`fixed top-0 left-0 z-50 h-full bg-base-100 shadow-lg transform transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            } w-1/2 lg:w-1/3`}
+            className={`fixed top-0 left-0 z-50 h-full bg-base-100 shadow-lg w-full sm:w-1/2 lg:w-1/3 transform transition-transform duration-300 ease-in-out ${
+              isSidebarOpen ? "translate-x-0" : ""
+            }`}
           >
             <div className="grid gap-8 p-6">
               <div className="flex items-center justify-between gap-4">

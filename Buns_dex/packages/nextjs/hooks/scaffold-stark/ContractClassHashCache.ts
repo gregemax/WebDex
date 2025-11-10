@@ -50,16 +50,34 @@ export class ContractClassHashCache {
     blockIdentifier: BlockIdentifier,
     cacheKey: string,
   ): Promise<string | undefined> {
-    try {
-      const classHash = await publicClient.getClassHashAt(
-        address,
-        blockIdentifier,
-      );
-      this.cache.set(cacheKey, classHash);
-      return classHash;
-    } catch (error) {
-      console.error("Failed to fetch class hash:", error);
-      return undefined;
+    const maxRetries = 3;
+    const retryDelay = 1000; // 1 second
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const classHash = await publicClient.getClassHashAt(
+          address,
+          blockIdentifier,
+        );
+        this.cache.set(cacheKey, classHash);
+        return classHash;
+      } catch (error) {
+        console.error(`Failed to fetch class hash (attempt ${attempt}/${maxRetries}):`, error);
+
+        if (attempt === maxRetries) {
+          // Log detailed error information for debugging
+          console.error("Final failure details:", {
+            address,
+            blockIdentifier,
+            error: error instanceof Error ? error.message : String(error),
+            cacheKey,
+          });
+          return undefined;
+        }
+
+        // Wait before retrying
+        await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+      }
     }
   }
 
@@ -68,3 +86,4 @@ export class ContractClassHashCache {
     this.pendingRequests.clear();
   }
 }
+

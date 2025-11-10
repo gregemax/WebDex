@@ -15054,7 +15054,7 @@ daisyui@latest:
     react: ">=16.8"
   peerDependenciesMeta:
     "@types/react":
-      optional: true
+optional: true  
     immer:
       optional: true
     react:
